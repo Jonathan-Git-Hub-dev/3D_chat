@@ -133,13 +133,16 @@ namespace WinFormsApp1
                 string returnData = Encoding.ASCII.GetString(receiveBytes);
                 //Trace.WriteLine("we recieved: " + returnData);
 
-                Communications.Decode_S(returnData, ref players);
+                lock (variable_lock)
+                {
+                    Communications.Decode_S(returnData, ref players);
+                }
 
-                for(int i=0; i<Globals.max_users; i++)
+                /*for(int i=0; i<Globals.max_users; i++)
                 {
                     players[i].Print();
                     Trace.WriteLine("");
-                }
+                }*/
             }
 
             udpClient.Close();
@@ -149,7 +152,7 @@ namespace WinFormsApp1
         public void Hide_Mouse()//(Form1 screen)
         {
             Cursor.Position = new Point(Globals.width / 2 + Globals.left_right_border / 2, Globals.height / 2 + Globals.top_border);
-            //Cursor.Hide();
+            Cursor.Hide();
         }
 
         private void render_worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)//, Bitmap bm)
@@ -279,7 +282,8 @@ namespace WinFormsApp1
             {
                 Movement.Handle_Movement(ref origin, xy_angle, e);
 
-                Render.Print_Coordinates(this, origin);
+
+                //Render.Print_Coordinates(this, origin);
             }
         }
 
@@ -287,13 +291,13 @@ namespace WinFormsApp1
         {
 
             //Trace.WriteLine("event generated");
-            /*lock (variable_lock)
+            lock (variable_lock)
             {
                 Movement.Handle_Mouse(e, ref xy_angle, ref z_angle, cage_mouse);
-                Render.Print_Angle(this, xy_angle, z_angle);
+                //Render.Print_Angle(this, xy_angle, z_angle);
                 
                 
-            }*/
+            }
         }
     }
 }
