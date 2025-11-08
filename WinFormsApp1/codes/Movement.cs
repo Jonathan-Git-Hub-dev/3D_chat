@@ -1,10 +1,13 @@
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace WinFormsApp1
 {
     class Movement
     {
+        //[DllImport("user32.dll")]
+        //private static extern bool SetCursorPos(int x, int y);
+
         private static double[] Vector_XY(int xy_angle)
         {//return a ratio of the direction a user is looking
             double x_movement;
@@ -44,11 +47,11 @@ namespace WinFormsApp1
             Math.Max(origin.z, Globals.z_negative_boarder);
             Math.Min(origin.z, Globals.z_positive_boarder);
         }
-        
-        public static void Handle_Movement(ref Point_3d origin, int xy_angle , KeyEventArgs e)
+
+        public static void Handle_Movement(ref Point_3d origin, int xy_angle, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.W)//Forward
-                Movement.Handle_Forward(xy_angle, ref origin); 
+                Movement.Handle_Forward(xy_angle, ref origin);
             if (e.KeyCode == Keys.A)//Left
                 Movement.Handle_Left(xy_angle, ref origin);
             if (e.KeyCode == Keys.D)//Right
@@ -100,25 +103,28 @@ namespace WinFormsApp1
 
         public static void Handle_Down(int xy_angle, ref Point_3d origin)
         {
-            origin.z = origin.z + Globals.step_size;  
+            origin.z = origin.z + Globals.step_size;
         }
 
         public static void Handle_Mouse(MouseEventArgs e, ref int xy_angle, ref int z_angle, bool cage_mouse)
         {
+            int x_default = Globals.width / 2 + Globals.left_right_border / 2;
+            int y_default = Globals.height / 2 + Globals.top_border;
+
             //center of screen relative to picture box
-            int x = e.X + Globals.left_right_border/2;
+            int x = e.X + Globals.left_right_border / 2;
             int y = e.Y + Globals.top_border + Globals.ribbon_height;
 
-            //Trace.WriteLine("x,y " + x + " " + y);
-            
-            int move_h = x - (Globals.width / 2 + Globals.left_right_border / 2);
-            //find movement vertically
-            int move_v = y - (Globals.height / 2 + Globals.top_border);
-            //Trace.WriteLine("movements " + move_h + " " + move_v);
+            int move_h = x - x_default;
+            int move_v = y - y_default;
 
 
-           
-
+            if (move_h == 0 && move_v == 0)
+            {
+                //ignoreable / must ignore as with will generate recursive move events to the same position
+                //Trace.WriteLine("ignore");
+                return;
+            }
 
             xy_angle += move_h;
             z_angle += move_v;
@@ -143,7 +149,13 @@ namespace WinFormsApp1
 
             //move cursor back to middle*/
             //Cursor.Position = new Point(Globals.width / 2 + Globals.left_right_border/2, Globals.height / 2 + Globals.top_border);
-            Cursor.Position = new Point(Globals.width / 2 + Globals.left_right_border / 2, Globals.height / 2 + Globals.top_border);
+            Cursor.Position = new Point(x_default, y_default);
+
+            //move cursor without generating an event
+            //SetCursorPos(Globals.width / 2 + Globals.left_right_border / 2, Globals.height / 2 + Globals.top_border);
+
+            //DateTime currentTime = DateTime.Now;
+            //Trace.WriteLine($"Current time: {currentTime.ToString("HH:mm:ss")}");
         }
     }
 }

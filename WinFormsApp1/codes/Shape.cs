@@ -34,7 +34,7 @@ namespace WinFormsApp1
             internal_points = passed_points;
         }
         public void Set_External_Points(Point_3d[] passed_points)
-        {   
+        {
             external_points = passed_points;
         }
 

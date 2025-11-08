@@ -1,12 +1,4 @@
-using System;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
-using System.Reflection;
 using System.Text;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WinFormsApp1
 {
@@ -47,7 +39,7 @@ namespace WinFormsApp1
             {
                 foreach (string file_line in File.ReadLines(input_file))
                 {
-                    if(Is_Vertex_Declaration(file_line))
+                    if (Is_Vertex_Declaration(file_line))
                     {
                         string[] point_variables = file_line.Split(' ');
                         double x = Convert.ToDouble(point_variables[1]);
@@ -57,14 +49,14 @@ namespace WinFormsApp1
                         points.Add(new Point_3d(x, y, z));
                     }
 
-                    if(Is_Face_Declaration(file_line))
+                    if (Is_Face_Declaration(file_line))
                     {
                         //get faces details
                         string[] face_deatils = file_line.Split(' ');
 
                         int[] point_indexes = new int[3];
 
-                        for(int i = 0; i< 3; i++)
+                        for (int i = 0; i < 3; i++)
                         {
                             string[] single_face_details = face_deatils[i + 1].Split('/');
                             int index = int.Parse(single_face_details[0]);
@@ -104,15 +96,15 @@ namespace WinFormsApp1
             {
                 foreach (string line in File.ReadLines(file))
                 {//load each line into a face
-                    if(line.Length == 0) continue;
+                    if (line.Length == 0) continue;
 
                     string[] line_contents = line.Split(Globals.comment);
                     string[] line_content = line_contents[0].Split(' ');
                     //only the first three are important
 
-                    Point_3d[] points = new Point_3d[3]; 
+                    Point_3d[] points = new Point_3d[3];
 
-                    for(int i=0; i< 3; i++)
+                    for (int i = 0; i < 3; i++)
                     {
                         //if (line_content[i][0] != '[' || line_content[i][line_content[i].Length - 1] != ']') { }//format error
                         string trimmed = line_content[i].Substring(1, line_content[i].Length - 2);
@@ -138,7 +130,7 @@ namespace WinFormsApp1
 
                 Shape_Internal_Points(ref asset);//get internal and external points
 
-                
+
 
 
                 return asset;
@@ -150,13 +142,13 @@ namespace WinFormsApp1
 
             return null;//panic here
         }
-       
+
         public static Point_3d Extreme_Point_Y(Asset obj)
         {
             //finding point that is most extreme in the y direction
             Point_3d best = new Point_3d(obj.faces[0].p1.x, obj.faces[0].p1.y, obj.faces[0].p1.z);
 
-            for(int i=0; i<obj.faces.Length; i++)
+            for (int i = 0; i < obj.faces.Length; i++)
             {
                 if (obj.faces[i].p1.y > best.y)
                 {
@@ -218,7 +210,7 @@ namespace WinFormsApp1
                         return new Face[] { cand, others[i] };
                     }
                 }
-               
+
                 //else add these faces as new candidates if not seen already
                 for (int i = 0; i < others.Length; i++)
                 {
@@ -228,7 +220,7 @@ namespace WinFormsApp1
                         tryed_faces.Add(others[i], true);
                     }
                 }
-                
+
             }
             //Trace.WriteLine("this is the end of our exn func 2");
             return null;//this should never be reached
@@ -253,7 +245,7 @@ namespace WinFormsApp1
             Point_3d[] options = Face.Normal_Vector_Points(starts[0]);
             if (Point_3d.Unsquared_Distance(middle_of_faces, options[0]) < Point_3d.Unsquared_Distance(middle_of_faces, options[1]))
             {
-                internal_points.Add(starts[0],(options[0], options[1]));
+                internal_points.Add(starts[0], (options[0], options[1]));
             }
             else//greater then, never equal
             {
@@ -264,7 +256,7 @@ namespace WinFormsApp1
             List<(Face, Face)> next = new List<(Face, Face)>();
             next.Add((starts[1], starts[0]));
 
-           // Trace.WriteLine("our first face");
+            // Trace.WriteLine("our first face");
             //starts[0].Print_Face();
             (Point_3d inside, Point_3d b) xxxx = internal_points[starts[0]];
             //xxxx.inside.Print_Point();
@@ -274,16 +266,16 @@ namespace WinFormsApp1
             int li = 1;
             while (next.Count > 0)//faces not solved
             {
-                
+
                 (Face target, Face solved_neighbour) tuple = next[0]; // Get the tuple
                 next.RemoveAt(0); // Remove the tuple
 
-                if(internal_points.ContainsKey(tuple.target)) continue;//target has been solved
+                if (internal_points.ContainsKey(tuple.target)) continue;//target has been solved
 
                 //Trace.WriteLine("interation " + li.ToString());
                 li++;
 
-                
+
 
 
                 //shared edge
@@ -333,12 +325,12 @@ namespace WinFormsApp1
                 //normal_vector1.Print_Vector();
                 normal_vector1.Scale_Vector();
                 Vector normal_vector2 = new Vector(-1 * normal_vector1.delta_x, -1 * normal_vector1.delta_y, -1 * normal_vector1.delta_z);
-             
+
 
 
                 Point_3d candidate1 = Point_3d.Point_Plus_Vector(target_centre, normal_vector1);
                 Point_3d candidate2 = Point_3d.Point_Plus_Vector(target_centre, normal_vector2);
-                
+
 
                 //make candidate 1 the right one
                 if (reference < 0)
@@ -358,7 +350,7 @@ namespace WinFormsApp1
                     }
                 }
 
-                
+
 
                 //which ever candidate is closer to reference is the inside point
                 if (Point_3d.Unsquared_Distance(inside_reference_candidate1, candidate1) < Point_3d.Unsquared_Distance(inside_reference_candidate1, candidate2))
@@ -375,7 +367,7 @@ namespace WinFormsApp1
 
                 //Trace.WriteLine("neigbours " + neigbours.Length);
 
-                for(int i =0; i<neigbours.Length; i++)
+                for (int i = 0; i < neigbours.Length; i++)
                 {
                     next.Add((neigbours[i], tuple.target));
                 }
@@ -390,7 +382,7 @@ namespace WinFormsApp1
             Point_3d[] ip = new Point_3d[obj.faces.Length];
             Point_3d[] op = new Point_3d[obj.faces.Length];
 
-            for(int i=0; i<obj.faces.Length; i++)
+            for (int i = 0; i < obj.faces.Length; i++)
             {
                 (Point_3d ins, Point_3d outs) tup = internal_points[obj.faces[i]];
                 ip[i] = tup.ins;
@@ -409,5 +401,5 @@ namespace WinFormsApp1
                 assets[i] = Asset_Passer.Read_Asset(Globals.asset_folder_3d + Globals.asset_options[i]);
             }
         }
-}
+    }
 }

@@ -1,17 +1,16 @@
 using System.Diagnostics;
-using System.Numerics;
 
 namespace WinFormsApp1
 {
     class Screen_Point
     {
-        public double x; 
+        public double x;
         public double y;
 
         public Screen_Point(double x, double y)
         {
             this.x = x;
-            this.y = y; 
+            this.y = y;
         }
 
         public Screen_Point()
@@ -48,15 +47,15 @@ namespace WinFormsApp1
 
             if (total > 0)
                 distance_h *= -1;
-            if (point.z  < centre_point.z)
+            if (point.z < centre_point.z)
                 distance_v *= -1;
 
             double distance = Math.Sqrt(Point_3d.Unsquared_Distance(origin, centre_point));
 
             if (distance == 0)
                 Trace.WriteLine("this is not good\n");
-            double max_w = distance * 2/2;//we need to programaticaaly do this
-            double max_h = distance/2;
+            double max_w = distance * 2 / 2;//we need to programaticaaly do this
+            double max_h = distance / 2;
 
             //need screen size
             /*return new Screen_Point(
@@ -69,36 +68,36 @@ namespace WinFormsApp1
 
         public void Extrapolate(Screen_Point reference)
         {
-            double aproximate_max =  9000000000000;
+            double aproximate_max = 9000000000000;
 
             //find gradients
             int run = (int)(reference.x - x);
             int rise = (int)(reference.y - y);
 
-            if(run == 0 && rise == 0)
+            if (run == 0 && rise == 0)
             {
                 //I dont think this should ever happen but idont know
                 return;
             }
 
-            if(run == 0)
+            if (run == 0)
             {
                 //int intercept = reference.y;
-                if(rise < 0)
+                if (rise < 0)
                 {
-                    y = -1*aproximate_max;
+                    y = -1 * aproximate_max;
                 }
                 else
                 {
                     y = aproximate_max;
                 }
             }
-            else if(rise == 0)
+            else if (rise == 0)
             {
                 //int intercept = reference.y;
-                if(run < 0)
+                if (run < 0)
                 {
-                    x = -1*aproximate_max;
+                    x = -1 * aproximate_max;
                 }
                 else
                 {
@@ -108,31 +107,31 @@ namespace WinFormsApp1
             else
             {
                 double intercept = reference.y - (run / rise) * reference.x;
-                if(rise > run)
+                if (rise > run)
                 {//rise domincant
-                    if(rise < 0)
+                    if (rise < 0)
                     {
-                        y = -1*aproximate_max;
+                        y = -1 * aproximate_max;
                     }
                     else
                     {
                         y = aproximate_max;
                     }
                     //find x
-                    x = (y-intercept)/(rise/run);
+                    x = (y - intercept) / (rise / run);
                 }
                 else
                 {//run doninant
-                    if(run < 0)
+                    if (run < 0)
                     {
-                        x = -1*aproximate_max;
+                        x = -1 * aproximate_max;
                     }
                     else
                     {
                         x = aproximate_max;
                     }
                     //find y
-                    y = (rise/run)*x + intercept;
+                    y = (rise / run) * x + intercept;
                 }
             }
         }

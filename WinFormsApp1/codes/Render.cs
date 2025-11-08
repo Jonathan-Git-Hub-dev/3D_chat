@@ -1,8 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Numerics;
-using System.Security.Cryptography;
 
 namespace WinFormsApp1
 {
@@ -15,13 +12,13 @@ namespace WinFormsApp1
 
         public static void Print_Coordinates(Form1 screen, Point_3d origin)
         {
-            screen.coordinates_label.Text = 
+            screen.coordinates_label.Text =
                 "Coordinates: [" +
                 Math.Round(origin.x, 2).ToString() +
-                ", " + 
+                ", " +
                 Math.Round(origin.y, 2).ToString() +
-                ", " + 
-                Math.Round(origin.z, 2).ToString() + 
+                ", " +
+                Math.Round(origin.z, 2).ToString() +
                 " ]"
             ;
         }
@@ -59,12 +56,12 @@ namespace WinFormsApp1
             long total = 0;
 
             //to prevent deviding by zero
-            if(new_span == 0)
+            if (new_span == 0)
             {
                 new_span = 1;
             }
 
-            for(int i =0; i< spans.Length; i++)
+            for (int i = 0; i < spans.Length; i++)
             {
                 temp = spans[i];
                 spans[i] = new_span;
@@ -247,6 +244,8 @@ namespace WinFormsApp1
 
             Vector face_nv = Vector.Normal_Vector(face);
 
+            //Trace.WriteLine(x_start + " " + x_end + "     " + y_start + " " + y_end);
+
             for (int x = x_start; x <= x_end; x++)
             {
                 for (int y = y_start; y <= y_end; y++)
@@ -309,82 +308,83 @@ namespace WinFormsApp1
 
 
 
-                                   Point_3d reference;
-                //find an onscreen point
-                if (p1_infront)
-                {
-                    reference = face.p1;
-                }
-                else if (p2_infront)
-                {
-                    reference = face.p1;
-                }
-                else
-                {//p3
-                    reference = face.p1;
-                }
+            Point_3d reference;
+            //find an onscreen point
+            if (p1_infront)
+            {
+                reference = face.p1;
+            }
+            else if (p2_infront)
+            {
+                reference = face.p1;
+            }
+            else
+            {//p3
+                reference = face.p1;
+            }
 
-                Screen_Point reference_point = new Screen_Point();
-                reference_point.Translate_2d(origin, reference, xy_angle, nv, h_v, v_v);
-                //for points not on screen
+            Screen_Point reference_point = new Screen_Point();
+            reference_point.Translate_2d(origin, reference, xy_angle, nv, h_v, v_v);
+            //for points not on screen
 
-                //get all points
+            //get all points
 
-                if (p1_infront)
-                {
-                    a.Translate_2d(origin, face.p1, xy_angle, nv, h_v, v_v);
-                }
-                else
-                {
-                    //get aproximate point extrapolate to near infinity
-                    face.p1.Earliest_Midpoint(origin, nv, reference);
-                    //plot out new point 
-                    a.Translate_2d(origin, face.p1, xy_angle, nv, h_v, v_v);
-                    //mody a by gradient
-                    a.Extrapolate(reference_point);
-                }
+            if (p1_infront)
+            {
+                a.Translate_2d(origin, face.p1, xy_angle, nv, h_v, v_v);
+            }
+            else
+            {
+                //get aproximate point extrapolate to near infinity
+                face.p1.Earliest_Midpoint(origin, nv, reference);
+                //plot out new point 
+                a.Translate_2d(origin, face.p1, xy_angle, nv, h_v, v_v);
+                //mody a by gradient
+                a.Extrapolate(reference_point);
+            }
 
-                if (p2_infront)
-                {
-                    b.Translate_2d(origin, face.p2, xy_angle, nv, h_v, v_v);
-                }
-                else
-                {
-                    //get aproximate point extrapolate to near infinity
-                    face.p2.Earliest_Midpoint(origin, nv, reference);
-                    //plot out new point 
-                    b.Translate_2d(origin, face.p2, xy_angle, nv, h_v, v_v);
-                    //mody a by gradient
-                    b.Extrapolate(reference_point);
-                }
+            if (p2_infront)
+            {
+                b.Translate_2d(origin, face.p2, xy_angle, nv, h_v, v_v);
+            }
+            else
+            {
+                //get aproximate point extrapolate to near infinity
+                face.p2.Earliest_Midpoint(origin, nv, reference);
+                //plot out new point 
+                b.Translate_2d(origin, face.p2, xy_angle, nv, h_v, v_v);
+                //mody a by gradient
+                b.Extrapolate(reference_point);
+            }
 
-                if (p3_infront)
-                {
-                    c.Translate_2d(origin, face.p3, xy_angle, nv, h_v, v_v);
-                }
-                else
-                {
-                    //get aproximate point extrapolate to near infinity
-                    face.p3.Earliest_Midpoint(origin, nv, reference);
-                    //plot out new point 
-                    c.Translate_2d(origin, face.p3, xy_angle, nv, h_v, v_v);
-                    //mody a by gradient
-                    c.Extrapolate(reference_point);
-                }
+            if (p3_infront)
+            {
+                c.Translate_2d(origin, face.p3, xy_angle, nv, h_v, v_v);
+            }
+            else
+            {
+                //get aproximate point extrapolate to near infinity
+                face.p3.Earliest_Midpoint(origin, nv, reference);
+                //plot out new point 
+                c.Translate_2d(origin, face.p3, xy_angle, nv, h_v, v_v);
+                //mody a by gradient
+                c.Extrapolate(reference_point);
+            }
 
-                  
+
 
             return true;
         }
 
         public static void Render_Assets(Asset_Instance[] temp, int xy_angle, int z_angle, Point_3d origin, ref Bitmap bm)
         {
+            //Trace.WriteLine("ra 1");
             double[,] best = new double[Globals.width, Globals.height];
             Clear_Screen(bm);
 
             Vector nv = Vector.Normal_Vector_Angle(xy_angle, z_angle);
             Point_3d d_of_1 = new Point_3d(origin.x + nv.delta_x, origin.y + nv.delta_y, origin.z + nv.delta_z);
-
+            //Trace.WriteLine("ra 2");
             //vectors for movement in plane perpendiculat to viewing angle
             Vector horizontal_vector = new Vector(Utility.Cos(xy_angle / 100), Utility.Sin(xy_angle / 100), 0);
             Vector vertical_vector = Vector.Cross_Product(nv, horizontal_vector);
@@ -392,22 +392,26 @@ namespace WinFormsApp1
             Vector left = new Vector(-1 * horizontal_vector.delta_x, -1 * horizontal_vector.delta_y, -1 * horizontal_vector.delta_z);//
             Vector top = new Vector(-1 * vertical_vector.delta_x / 2, -1 * vertical_vector.delta_y / 2, -1 * vertical_vector.delta_z / 2);
             Point_3d top_left = Point_3d.Point_Plus_Vector(Point_3d.Point_Plus_Vector(d_of_1, top), left);
-
+            //Trace.WriteLine("ra 3");
 
 
             for (int i = 0; i < Globals.max_users; i++)
             {
-                if (i != Form1.user_id && temp[i].online)
+                //Trace.WriteLine("ra 3.1");
+                if (i != Globals.id && temp[i].online)
                 {
                     Render_An_Asset(temp[i], xy_angle, z_angle, origin, ref bm, ref best, nv, horizontal_vector, vertical_vector, top_left);
                 }
+                //Trace.WriteLine("ra 3.2");
 
             }
+            //Trace.WriteLine("ra 4");
         }
         public static void Render_An_Asset(Asset_Instance temp, int xy_angle, int z_angle, Point_3d origin, ref Bitmap bm, ref double[,] best, Vector nv, Vector h_v, Vector v_v, Point_3d tl)
         {
             for (int i = 0; i < Form1.assets[temp.asset_index].faces.Length; i++)
             {
+                //Trace.WriteLine("( 1 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
                 Point_3d inside = Form1.assets[temp.asset_index].internal_points[i].Copy();
                 Point_3d outside = Form1.assets[temp.asset_index].external_points[i].Copy();
 
@@ -422,7 +426,7 @@ namespace WinFormsApp1
                     continue;
                 }
 
-
+                //Trace.WriteLine("( 2 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
 
                 Face face_t = Form1.assets[temp.asset_index].faces[i].Copy();
                 face_t.Translate_Face(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
@@ -432,16 +436,18 @@ namespace WinFormsApp1
                 Screen_Point b = new Screen_Point();
                 Screen_Point c = new Screen_Point();
 
-                if(!Translate_Face_2d(ref a, ref b, ref c, face_t, origin, xy_angle, nv, h_v, v_v))//face generates no on screen gemetries
+                if (!Translate_Face_2d(ref a, ref b, ref c, face_t, origin, xy_angle, nv, h_v, v_v))//face generates no on screen gemetries
                 {
                     //Trace.WriteLine("skipping");
                     continue;
                 }
                 //Trace.WriteLine("not skipp" + xy_angle/100);
-                
+                //Trace.WriteLine("( 9 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
 
+                //Trace.WriteLine("( ts ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
                 Render_Triangle(a, b, c, face_t, outside, temp.colour, origin, xy_angle, nv, best, bm, tl);
-
+                //Trace.WriteLine("( 10 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
+                //Trace.WriteLine("( te ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
             }
         }
 

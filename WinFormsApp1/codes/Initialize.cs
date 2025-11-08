@@ -1,16 +1,15 @@
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace WinFormsApp1
 {
     class Initialize
-    { 
+    {
         public static void Get_Screen_Size(Form1 screen)
         {
             Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
 
             int width = workingArea.Width - Globals.left_right_border;
-            
+
             Globals.width = width;
             Globals.height = width / 2;
 
@@ -27,7 +26,7 @@ namespace WinFormsApp1
             bm = new Bitmap(Globals.width, Globals.height); // Create a new Bitmap
             screen.render_screen.Location = new Point(Globals.left_right_border / 2, Globals.top_border);
             screen.render_screen.Size = new Size(Globals.width, Globals.height);
-            
+
 
 
             //move labels
@@ -37,9 +36,32 @@ namespace WinFormsApp1
 
         }
 
+        public static void Initialize_Menu(ref Menu menu)
+        {
+            menu = new Menu();
+
+
+            
+            Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
+
+
+            int width = workingArea.Width;
+            int height = workingArea.Height;
+
+            int menu_width = menu.Width;
+            int menu_height = menu.Height;
+
+            //center menu
+            //Trace.WriteLine(width + " " + menu_width);
+            //Trace.WriteLine(height + " " + menu_height);
+            Globals.menu_left_distance = (width - menu_width)/2;
+            Globals.menu_top_disatnce = (height - menu_height) / 2;
+            //menu.Location = new Point(left_distance, top_disatnce);
+            //menu.Location = new Point(1000, 1000);
+        }
         public static void Initial_Print(Form1 screen)
         {
-            Render.Print_Coordinates(screen, new Point_3d(0,0,0));
+            Render.Print_Coordinates(screen, new Point_3d(0, 0, 0));
             Render.Print_Angle(screen, 0, 0);
         }
 

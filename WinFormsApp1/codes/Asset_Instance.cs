@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace WinFormsApp1
 {
@@ -20,7 +19,7 @@ namespace WinFormsApp1
             angle = 0;
             online = false;
         }
-        
+
         public void Copy(Asset_Instance source)
         {
             asset_index = source.asset_index;

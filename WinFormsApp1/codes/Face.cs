@@ -79,9 +79,9 @@ namespace WinFormsApp1
 
             //if two matches face is a neighbour because they share an edge
             int matches = 0;
-            if (tally.ContainsKey(face2.p1)) {matches++;}
-            if (tally.ContainsKey(face2.p2)) {matches++;}
-            if (tally.ContainsKey(face2.p3)) {matches++;}
+            if (tally.ContainsKey(face2.p1)) { matches++; }
+            if (tally.ContainsKey(face2.p2)) { matches++; }
+            if (tally.ContainsKey(face2.p3)) { matches++; }
 
             if (matches == 2)
             {
@@ -100,7 +100,7 @@ namespace WinFormsApp1
             {
                 //face.Print_Face();
                 //    shape.faces[i].Print_Face();
-                if(face.Equals(shape.faces[i])) { continue; }//skip self
+                if (face.Equals(shape.faces[i])) { continue; }//skip self
 
                 if (Neighbour_Face(face, shape.faces[i]))
                 {

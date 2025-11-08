@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using WinFormsApp1;
 
 namespace WinFormsApp1
 {
@@ -16,7 +15,7 @@ namespace WinFormsApp1
             delta_z = movement_z;
         }
 
-        
+
 
         public void Vec_Len()
         {
@@ -129,7 +128,7 @@ namespace WinFormsApp1
                 x_movement = Utility.Sin(xy_angle);
                 y_movement = -1 * Utility.Cos(xy_angle);
             }
-            else if (xy< 180)
+            else if (xy < 180)
             {
                 x_movement = Utility.Cos(xy_angle - 90);
                 y_movement = Utility.Sin(xy_angle - 90);
@@ -145,12 +144,12 @@ namespace WinFormsApp1
                 y_movement = -1 * Utility.Sin(xy_angle - 270);
             }
 
-            return new double[] {x_movement,y_movement};
+            return new double[] { x_movement, y_movement };
         }
 
         public static Vector Normal_Vector_Angle(int xy_angle, int z_angle)
         {
-            double z_movement = Utility.Sin(z_angle/100);
+            double z_movement = Utility.Sin(z_angle / 100);
 
             double remainder = Math.Sqrt(1 - Math.Pow(z_movement, 2));
 

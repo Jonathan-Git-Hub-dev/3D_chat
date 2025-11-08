@@ -1,17 +1,7 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.Xml;
-using System.Security.Policy;
 using System.Text;
-using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 //using System.Net;
 //using System.Net.Sockets;
 //using System.Text;
@@ -29,13 +19,17 @@ namespace WinFormsApp1
     {
         public static Asset[] assets = new Asset[Globals.asset_options.Length];
         public static Asset_Instance[] players = new Asset_Instance[Globals.max_users];
-        public static int user_id = -1;
+        /*public static int user_id = -1;
         public static int udp_port = 0;
         public static int asset_number = 0;
-        public static Colour colour_c;
+        public static Colour colour_c;*/
+        Menu modalForm;// = new Menu();
 
-        public Form1(int id, int port, int asset_num, int[] colour_choice)
+        //public Form1(int id, int port, int asset_num, int[] colour_choice)
+        public Form1(ref Menu menu)
         {
+
+            this.ShowInTaskbar = false;
             this.WindowState = FormWindowState.Maximized;
             this.Icon = new Icon(Globals.asset_folder_2d + "main_icon.ico");
             Asset_Passer.Get_Assets(ref assets);
@@ -44,12 +38,16 @@ namespace WinFormsApp1
 
             InitializeComponent();
 
-            user_id = id;
+            players[3].online = true;
+
+
+            modalForm = menu;
+            /*user_id = id;
             udp_port = port;
             asset_number = asset_num;
-            colour_c = new Colour(colour_choice);
+            colour_c = new Colour(colour_choice);*/
 
-
+            //var modalForm = new Menu();
 
             //this.Hide_Mouse();
 
@@ -77,13 +75,17 @@ namespace WinFormsApp1
             Initialize.Get_Screen_Size(this);
             Initialize.Structure_Componenets(ref bm, this);
             Initialize.Initial_Print(this);
+            //Initialize.Initialize_Menu(ref modalForm);
 
-            this.Hide_Mouse();
+            //this.Hide_Mouse();
 
 
             render_worker.RunWorkerAsync();
             //communication_out_worker.RunWorkerAsync();
-            communication_in_worker.RunWorkerAsync();
+            if (Globals.new_port != 0)
+            {
+                communication_in_worker.RunWorkerAsync();
+            }
         }
 
         private void communiction_out_worker_DoWork(object sender, DoWorkEventArgs e)
@@ -95,11 +97,11 @@ namespace WinFormsApp1
             while (true)
             {
                 //get our data use a mutex
-                string message = Communications.Encode_User_statistic(origin, xy_angle, colour_c, asset_number);
+                string message = Communications.Encode_User_statistic(origin, xy_angle, Globals.colour_choice, Globals.chosen_option);
                 byte[] data = Encoding.UTF8.GetBytes(message);
 
 
-                udpClient.Send(data, data.Length, Globals.server_ip, udp_port);
+                udpClient.Send(data, data.Length, Globals.server_ip, Globals.new_port);
                 Thread.Sleep(1000);
             }
         }
@@ -114,7 +116,7 @@ namespace WinFormsApp1
 
             // Specify the remote endpoint (IP address and port)
             int remotePort = 8081;
-            Trace.WriteLine(udp_port + " " + remotePort);
+            //Trace.WriteLine(udp_port + " " + remotePort);
 
 
             // Send the data
@@ -135,7 +137,7 @@ namespace WinFormsApp1
 
                 lock (variable_lock)
                 {
-                    Communications.Decode_S(returnData, ref players);
+                    //Communications.Decode_S(returnData, ref players);
                 }
 
                 /*for(int i=0; i<Globals.max_users; i++)
@@ -186,10 +188,12 @@ namespace WinFormsApp1
                     bool temp = false;
                     lock (render_lock)
                     {
+                        //Trace.WriteLine("1 acc");
                         if (rendered)
                         {
                             temp = true;
                         }
+                        //Trace.WriteLine("1 rell");
                     }
 
                     if (temp)
@@ -202,6 +206,7 @@ namespace WinFormsApp1
                     }
                 }
 
+                //Trace.WriteLine("watiig for v l");
                 lock (variable_lock)
                 {
                     pass_xy_angle = xy_angle;
@@ -216,13 +221,18 @@ namespace WinFormsApp1
                         pass_players[i].Copy(players[i]);
                     }
                 }
+                //Trace.WriteLine("got v l");
 
                 start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                //Trace.WriteLine("w rl");
                 lock (render_lock)
                 {
+                    //Trace.WriteLine("2 acc");
                     Render.Render_Assets(pass_players, pass_xy_angle, pass_z_angle, pass_origin, ref bm);
                     rendered = false;
+                    //Trace.WriteLine("2 rell");
                 }
+                //Trace.WriteLine("g wl");
                 stop = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 long span = stop - start;
 
@@ -230,6 +240,9 @@ namespace WinFormsApp1
 
                 //rendered = false;
                 //Trace.WriteLine("start call");
+
+                DateTime currentTime = DateTime.Now;
+                //Trace.WriteLine($"Current time: {currentTime.ToString("HH:mm:ss")}");
                 render_worker.ReportProgress((int)span);
                 //Trace.WriteLine("end call");
                 //Monitor.Wait(render_lock);
@@ -245,8 +258,10 @@ namespace WinFormsApp1
             //Trace.WriteLine("start print");
             lock (render_lock)
             {
+                //Trace.WriteLine("3 acc");
                 this.render_screen.Image = bm;
                 rendered = true;
+                //Trace.WriteLine("3 rel");
             }
             fps_label.Text = "FPS: ~" + e.ProgressPercentage.ToString();
         }
@@ -259,12 +274,29 @@ namespace WinFormsApp1
         {
             if (e.KeyCode == Keys.Escape)
             {
-                //MessageBox.Show("helo");
-                var modalForm = new Menu();
-                if (modalForm.ShowDialog(this) == DialogResult.OK)
+                /*//display mouse
+                Cursor.Show();
+                DialogResult d = modalForm.ShowDialog(this);
+                if (d == DialogResult.OK)
+                //if (modalForm.ShowDialog(this) == DialogResult.OK)
                 {
                     // Process the result when the modal form is closed with OK
+                    Trace.WriteLine("done good");
+                    //Trace.WriteLine(modalForm.Location.ToString() + " actual current loc");
+
+                    //re hide
+                    Hide_Mouse();
                 }
+                else if (d == DialogResult.No)
+                {
+                    Trace.WriteLine("minmize");
+
+                }
+                else
+                {
+                    Trace.WriteLine("done bad");
+                }*/
+                modalForm.WindowState = FormWindowState.Normal;
 
             }
 
@@ -281,8 +313,6 @@ namespace WinFormsApp1
             lock (variable_lock)
             {
                 Movement.Handle_Movement(ref origin, xy_angle, e);
-
-
                 //Render.Print_Coordinates(this, origin);
             }
         }
@@ -294,10 +324,13 @@ namespace WinFormsApp1
             lock (variable_lock)
             {
                 Movement.Handle_Mouse(e, ref xy_angle, ref z_angle, cage_mouse);
-                //Render.Print_Angle(this, xy_angle, z_angle);
-                
-                
+                Render.Print_Angle(this, xy_angle, z_angle);
             }
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            Trace.WriteLine("this has been resized");
         }
     }
 }

@@ -3,13 +3,13 @@ namespace WinFormsApp1
     public static class Globals
     {
         //Movement Globals
-            //bondries for user movement
-            public static int x_negative_boarder = -50;
-            public static int x_positive_boarder = 50;
-            public static int y_negative_boarder = -50;
-            public static int y_positive_boarder = 50;
-            public static int z_negative_boarder = -20;
-            public static int z_positive_boarder = 20;
+        //bondries for user movement
+        public static int x_negative_boarder = -50;
+        public static int x_positive_boarder = 50;
+        public static int y_negative_boarder = -50;
+        public static int y_positive_boarder = 50;
+        public static int z_negative_boarder = -20;
+        public static int z_positive_boarder = 20;
 
         //Amount of movement per input
         public static int scaling = 100;
@@ -37,7 +37,8 @@ namespace WinFormsApp1
         public static string asset_folder_2d = asset_folder + @"2d\";
 
         public static string[] asset_options = { "golden_asset.txt", "machine_asset.txt" };
-        
+        //public static string[] asset_options = { "cube.txt", "machine_asset.txt" };
+
         public static int max_users = 4;
 
         //colour
@@ -57,8 +58,23 @@ namespace WinFormsApp1
         public static int ribbon_height;
         public static int height;
         public static int width;
+        public static int menu_left_distance;
+        public static int menu_top_disatnce;
 
 
         public static string server_ip = "3.25.130.4"; // Example: localhost
+
+
+        //user data recieved
+        public static int id;
+        public static int new_port;
+        public static int chosen_option;
+        //public static int[] colour_choice = { 255, 0, 0};
+        public static Colour colour_choice;
+
+
+
+
+        public static Form1 main_screen;
     }
 }

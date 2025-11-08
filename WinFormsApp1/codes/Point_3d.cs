@@ -25,7 +25,7 @@ namespace WinFormsApp1
 
         public Point_3d Copy()
         {
-            return new Point_3d(x,y,z);
+            return new Point_3d(x, y, z);
         }
 
         public override string ToString()
@@ -240,11 +240,11 @@ namespace WinFormsApp1
             //using binary search with a know from point
             do
             {
-                x = Math.Min(x, reference.x) + Math.Abs(x - reference.x)/2;
-                y = Math.Min(y, reference.y) + Math.Abs(y - reference.y)/2;
-                z = Math.Min(z, reference.z) + Math.Abs(z - reference.z)/2;
+                x = Math.Min(x, reference.x) + Math.Abs(x - reference.x) / 2;
+                y = Math.Min(y, reference.y) + Math.Abs(y - reference.y) / 2;
+                z = Math.Min(z, reference.z) + Math.Abs(z - reference.z) / 2;
 
-            }while(Face.Infront(this, origin, nv));
+            } while (Face.Infront(this, origin, nv));
         }
 
         public void Relative_Point(Point_3d middle, Point_3d origin)

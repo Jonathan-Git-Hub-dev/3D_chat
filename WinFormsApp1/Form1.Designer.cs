@@ -107,6 +107,7 @@
             Text = "Form1";
             Load += Form1_Load;
             KeyDown += Form1_KeyDown;
+            Resize += Form1_Resize;
             ((System.ComponentModel.ISupportInitialize)render_screen).EndInit();
             ResumeLayout(false);
             PerformLayout();

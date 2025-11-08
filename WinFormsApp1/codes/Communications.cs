@@ -1,11 +1,8 @@
-using System.Globalization;
-using System.Reflection.Metadata.Ecma335;
-
 namespace WinFormsApp1
 {
     public class Communications
     {
-        public static string Encode_User_statistic(Point_3d origin, int xy_angle, Colour colour, int asset_choice) 
+        public static string Encode_User_statistic(Point_3d origin, int xy_angle, Colour colour, int asset_choice)
         {
             string message = origin.ToString();
 
@@ -20,7 +17,7 @@ namespace WinFormsApp1
         {
             string[] instance_data = message.Split("$");
 
-            for(int i=0; i< Globals.max_users; i++)
+            for (int i = 0; i < Globals.max_users; i++)
             {
                 string[] data = instance_data[i].Split(" ");
 
@@ -49,7 +46,7 @@ namespace WinFormsApp1
         {
             int online = int.Parse(data);
 
-            if(online == 1)
+            if (online == 1)
             {
                 return true;
             }

@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.DataFormats;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net.Sockets;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WinFormsApp1
 {
@@ -18,10 +10,16 @@ namespace WinFormsApp1
         int chosen_option = 0;
         int[] colour_choice = new int[] { 255, 0, 0 };
         Bitmap ccc = new Bitmap(48, 50);
+
+        //other screens
+        public static Menu menu;
+        //public static Form1 main_screen; 
+
+
         public Startup()
         {
             InitializeComponent();
-           
+
 
             //Clear_All_Options();
 
@@ -36,6 +34,8 @@ namespace WinFormsApp1
             Soon_Icon.Image = Image.FromFile(Globals.asset_folder_2d + "Soon.png");
 
 
+            Initialize.Initialize_Menu(ref menu);
+            Globals.main_screen = new Form1(ref menu);
         }
 
         private void Colour_Pic(int[] colour)
@@ -107,12 +107,12 @@ namespace WinFormsApp1
             pictureBox1.Image = bm;
         }
 
-       
 
-        
-       private async Task<(bool, int, int)> Connect()
+
+
+        private async Task<(bool, int, int)> Connect()
         {
-            
+
             int port = 8080; // Example port
             int new_port = -1;
             int id = -1;
@@ -136,10 +136,10 @@ namespace WinFormsApp1
                 if ((bytesRead = stream.Read(buffer, 0, buffer.Length)) < 0)
                 {
                     Trace.WriteLine("no data");
-                    return (false, -1,-1);
+                    return (false, -1, -1);
                 }
                 string receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-               Trace.WriteLine($"Received: {receivedMessage}");
+                Trace.WriteLine($"Received: {receivedMessage}");
                 string[] nums = receivedMessage.Split(',');
                 id = int.Parse(nums[0]);
                 new_port = int.Parse(nums[1]);
@@ -158,17 +158,32 @@ namespace WinFormsApp1
 
 
             //info about our instance
-            (bool status, int id, int new_port) data = await Connect();
+            /*(bool status, int id, int new_port) data = await Connect();
 
             if (!data.status)
             {
                 Connection_Status.Text = "Failed to connect, try again later";
                 return;
-            }
-            
+            }*/
 
-            Form1 newForm = new Form1(data.id, data.new_port, chosen_option, colour_choice); // Create an instance of Form2
-            newForm.Show();
+
+            //Form1 newForm = new Form1(data.id, data.new_port, chosen_option, colour_choice); // Create an instance of Form2
+            //Form1 newForm = new Form1(0, 0, chosen_option, colour_choice);
+            //newForm.Show();
+
+            //save users data to globals
+            //Globals.id = data.id;
+            Globals.id = 0;
+            //Globals.new_port = data.new_port;
+            Globals.new_port = 0;
+            Globals.chosen_option = chosen_option;
+            //Globals.colour_choice = colour_choice;
+            Globals.colour_choice = new Colour(colour_choice);
+
+
+            Globals.main_screen.Show();
+            menu.Show();
+            menu.WindowState = FormWindowState.Minimized;//this becomes our aplications icon
 
             this.Hide();
             //while (true)
@@ -176,7 +191,7 @@ namespace WinFormsApp1
             //Trace.WriteLine("still kicking");
             //Thread.Sleep(500);
             //}
-                //else dispaly fail message
+            //else dispaly fail message
         }
 
         private void Machine_Button_Click(object sender, EventArgs e)
@@ -191,7 +206,7 @@ namespace WinFormsApp1
         {
             Machine_Button.FlatAppearance.BorderSize = 1;
             Golden_Button.FlatAppearance.BorderSize = 5;
-        
+
             chosen_option = 1;
         }
 
@@ -216,6 +231,14 @@ namespace WinFormsApp1
             Colour_Pic(colour_choice);
 
 
+        }
+
+        private void Startup_Load(object sender, EventArgs e)
+        {
+            /*Form1 newForm = new Form1(0, 0, chosen_option, colour_choice);
+            newForm.Show();
+
+            this.Hide();*/
         }
     }
 }

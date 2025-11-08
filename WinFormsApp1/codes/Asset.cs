@@ -7,12 +7,12 @@ namespace WinFormsApp1
         public Point_3d[] external_points;
         public Point_3d middle;
 
-    
+
 
         public Asset(Face[] passed_faces)
         {
             faces = passed_faces;
-            middle = new Point_3d(0,0,0);
+            middle = new Point_3d(0, 0, 0);
 
             internal_points = null;
             external_points = null;
@@ -23,7 +23,7 @@ namespace WinFormsApp1
             internal_points = passed_points;
         }
         public void Set_External_Points(Point_3d[] passed_points)
-        {   
+        {
             external_points = passed_points;
         }
 
@@ -44,7 +44,7 @@ namespace WinFormsApp1
             }
             double x = min_x + (max_x - min_x) / 2;
             double y = min_y + (max_y - min_y) / 2;
-            
+
 
             //z is irelevant
             this.middle = new Point_3d(x, y, 0);
