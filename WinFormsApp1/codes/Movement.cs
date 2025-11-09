@@ -108,21 +108,19 @@ namespace WinFormsApp1
 
         public static void Handle_Mouse(MouseEventArgs e, ref int xy_angle, ref int z_angle, bool cage_mouse)
         {
-            int x_default = Globals.width / 2 + Globals.left_right_border / 2;
-            int y_default = Globals.height / 2 + Globals.top_border;
-
             //center of screen relative to picture box
             int x = e.X + Globals.left_right_border / 2;
-            int y = e.Y + Globals.top_border + Globals.ribbon_height;
+            int y = e.Y + Globals.top_border + Globals.top_border - 5;
 
-            int move_h = x - x_default;
-            int move_v = y - y_default;
+            Trace.WriteLine("xy " + x + " " + y);//xy 960 509
+
+            int move_h = x - Globals.x_default;
+            int move_v = y - Globals.y_default;
 
 
             if (move_h == 0 && move_v == 0)
             {
                 //ignoreable / must ignore as with will generate recursive move events to the same position
-                //Trace.WriteLine("ignore");
                 return;
             }
 
@@ -144,18 +142,44 @@ namespace WinFormsApp1
             z_angle = Math.Max(z_angle, Globals.minimum_z_angle);
             z_angle = Math.Min(z_angle, Globals.maximum_z_angle);
 
+            Cursor.Position = new Point(Globals.x_default, Globals.y_default);
 
-            //Trace.WriteLine("x,y " + xy_angle + " " + z_angle);
 
-            //move cursor back to middle*/
-            //Cursor.Position = new Point(Globals.width / 2 + Globals.left_right_border/2, Globals.height / 2 + Globals.top_border);
-            Cursor.Position = new Point(x_default, y_default);
 
-            //move cursor without generating an event
-            //SetCursorPos(Globals.width / 2 + Globals.left_right_border / 2, Globals.height / 2 + Globals.top_border);
 
-            //DateTime currentTime = DateTime.Now;
-            //Trace.WriteLine($"Current time: {currentTime.ToString("HH:mm:ss")}");
+            //center of screen relative to picture box
+            /*Uint x = e.X + Globals.left_right_border / 2;
+            int y = e.Y + Globals.top_border + Globals.ribbon_height;
+
+            int move_h = x - Globals.x_default;
+            int move_v = y - Globals.y_default;
+
+
+            if (move_h == 0 && move_v == 0)
+            {
+                //ignoreable / must ignore as with will generate recursive move events to the same position
+                return;
+            }
+
+            xy_angle += move_h;
+            z_angle += move_v;
+
+
+            //clamping xy
+            if (xy_angle > Globals.maximum_xy_angle)
+            {
+                xy_angle = Globals.minimum_xy_angle + (xy_angle - Globals.maximum_xy_angle);
+            }
+            if (xy_angle < Globals.minimum_xy_angle)
+            {
+                xy_angle = Globals.maximum_xy_angle + xy_angle;
+            }
+
+            //clamp z
+            z_angle = Math.Max(z_angle, Globals.minimum_z_angle);
+            z_angle = Math.Min(z_angle, Globals.maximum_z_angle);
+
+            Cursor.Position = new Point(Globals.x_default, Globals.y_default);*/
         }
     }
 }

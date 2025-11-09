@@ -18,6 +18,10 @@ namespace WinFormsApp1
             //Globals.ribbon_height = screenRectangle.Top - screen.Top;
             Globals.ribbon_height = 34;
 
+            Globals.x_default = workingArea.Width / 2;
+            Globals.y_default = workingArea.Height / 2;
+
+            Trace.WriteLine("new cent " + Globals.x_default + " " + Globals.y_default);
         }
 
         public static void Structure_Componenets(ref Bitmap bm, Form1 screen)

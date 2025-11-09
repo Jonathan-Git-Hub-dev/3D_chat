@@ -21,6 +21,7 @@ namespace WinFormsApp1
         private void Button_Hide_Click(object sender, EventArgs e)
         {
            this.WindowState= FormWindowState.Minimized;
+            Globals.showing_menu = true;
         }
 
         private void Button_Quit_Click(object sender, EventArgs e)

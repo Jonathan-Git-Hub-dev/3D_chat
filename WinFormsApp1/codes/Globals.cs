@@ -60,6 +60,9 @@ namespace WinFormsApp1
         public static int width;
         public static int menu_left_distance;
         public static int menu_top_disatnce;
+        public static int x_default;// = Globals.width / 2 + Globals.left_right_border / 2;
+        public static int y_default;// = Globals.height / 2 + Globals.top_border;
+
 
 
         public static string server_ip = "3.25.130.4"; // Example: localhost
@@ -76,5 +79,7 @@ namespace WinFormsApp1
 
 
         public static Form1 main_screen;
+
+        public static bool showing_menu = false;
     }
 }

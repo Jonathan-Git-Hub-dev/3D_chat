@@ -102,7 +102,7 @@
             Controls.Add(render_screen);
             Controls.Add(angle_label);
             Cursor = Cursors.No;
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.None;
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
