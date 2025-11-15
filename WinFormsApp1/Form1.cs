@@ -23,7 +23,7 @@ namespace WinFormsApp1
         Menu modalForm;// = new Menu();
 
         //public Form1(int id, int port, int asset_num, int[] colour_choice)
-        public Form1(ref Menu menu)
+        public Form1()
         {
 
             this.ShowInTaskbar = false;
@@ -35,16 +35,12 @@ namespace WinFormsApp1
 
             InitializeComponent();
 
+            Initialize.Get_Screen_Size(this);
+            Initialize.Structure_Componenets(ref bm, this);
+            Initialize.Initial_Print(this);
+
             players[3].online = true;
 
-
-            modalForm = menu;
-            /*user_id = id;
-            udp_port = port;
-            asset_number = asset_num;
-            colour_c = new Colour(colour_choice);*/
-
-            //var modalForm = new Menu();
 
             //this.Hide_Mouse();
 
@@ -69,14 +65,24 @@ namespace WinFormsApp1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Initialize.Get_Screen_Size(this);
+            /*Initialize.Get_Screen_Size(this);
             Initialize.Structure_Componenets(ref bm, this);
-            Initialize.Initial_Print(this);
+            Initialize.Initial_Print(this);*/
             //Initialize.Initialize_Menu(ref modalForm);
 
             //this.Hide_Mouse();
 
 
+            /*render_worker.RunWorkerAsync();
+            //communication_out_worker.RunWorkerAsync();
+            if (Globals.new_port != 0)
+            {
+                communication_in_worker.RunWorkerAsync();
+            }*/
+        }
+
+        public void activate_background_workers()
+        {
             render_worker.RunWorkerAsync();
             //communication_out_worker.RunWorkerAsync();
             if (Globals.new_port != 0)
@@ -85,13 +91,22 @@ namespace WinFormsApp1
             }
         }
 
+        public void deactivate_background_workers()
+        {
+            render_worker.CancelAsync();
+            communication_in_worker.CancelAsync();
+            communication_out_worker.CancelAsync();
+        }
+
         private void communiction_out_worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            //set up udp
+            BackgroundWorker worker = sender as BackgroundWorker;
 
-            UdpClient udpClient = new UdpClient();
+            
 
-            while (true)
+                UdpClient udpClient = new UdpClient();
+
+            while (worker.CancellationPending)
             {
                 //get our data use a mutex
                 string message = Communications.Encode_User_statistic(origin, xy_angle, Globals.colour_choice, Globals.chosen_option);
@@ -101,10 +116,23 @@ namespace WinFormsApp1
                 udpClient.Send(data, data.Length, Globals.server_ip, Globals.new_port);
                 Thread.Sleep(1000);
             }
+
+            e.Cancel = true; // Indicate that the operation was cancelled
+            return; // Exit the DoWork method
+        }
+
+        public void Handle_Display()
+        {
+            lock (render_lock)
+            {//get mutex for bitmap
+                this.Show();
+            }
         }
 
         private async void communication_in_worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
             UdpClient udpClient = new UdpClient();
 
             // Prepare the data to send
@@ -125,7 +153,7 @@ namespace WinFormsApp1
 
 
             //Trace.WriteLine($"UDP message sent to {Globals.server_ip}:{remotePort}");
-            while (true)
+            while (!worker.CancellationPending)
             {
                 UdpReceiveResult result = await udpClient.ReceiveAsync();
                 byte[] receiveBytes = result.Buffer;
@@ -144,7 +172,11 @@ namespace WinFormsApp1
                 }*/
             }
 
-            udpClient.Close();
+          
+                e.Cancel = true; // Indicate that the operation was cancelled
+                return; // Exit the DoWork method
+            
+            //udpClient.Close();
 
         }
 
@@ -156,6 +188,8 @@ namespace WinFormsApp1
 
         private void render_worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)//, Bitmap bm)
         {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
             //return;
             DateTimeOffset now;
             long start, stop;
@@ -175,8 +209,9 @@ namespace WinFormsApp1
                 pass_players[i] = new Asset_Instance();
             }
 
+            //Thread.Sleep(2000);
 
-            while (true)//true
+            while (!worker.CancellationPending)//true
             {
 
 
@@ -247,6 +282,9 @@ namespace WinFormsApp1
                 //Monitor.Exit(render_lock)
 
             }
+            e.Cancel = true; // Indicate that the operation was cancelled
+            Trace.WriteLine("render workder done " + DateTime.Now.ToLongTimeString());
+            return; // Exit the DoWork method
         }
 
 
@@ -293,7 +331,7 @@ namespace WinFormsApp1
                 {
                     Trace.WriteLine("done bad");
                 }*/
-                modalForm.WindowState = FormWindowState.Normal;
+                Globals.menu.WindowState = FormWindowState.Normal;
                 Globals.showing_menu = true;
 
             }

@@ -79,6 +79,8 @@ namespace WinFormsApp1
 
 
         public static Form1 main_screen;
+        public static Menu menu;
+        public static Startup startup_screen;
 
         public static bool showing_menu = false;
     }

@@ -43,10 +43,7 @@ namespace WinFormsApp1
         public static void Initialize_Menu(ref Menu menu)
         {
             menu = new Menu();
-
-
-            
-            Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
+            /*Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
 
 
             int width = workingArea.Width;
@@ -55,14 +52,17 @@ namespace WinFormsApp1
             int menu_width = menu.Width;
             int menu_height = menu.Height;
 
-            //center menu
-            //Trace.WriteLine(width + " " + menu_width);
-            //Trace.WriteLine(height + " " + menu_height);
+           
             Globals.menu_left_distance = (width - menu_width)/2;
-            Globals.menu_top_disatnce = (height - menu_height) / 2;
-            //menu.Location = new Point(left_distance, top_disatnce);
-            //menu.Location = new Point(1000, 1000);
+            Globals.menu_top_disatnce = (height - menu_height) / 2;*/
         }
+
+        public static void Initialize_Screen()
+        {
+            Globals.main_screen = new Form1();
+            Globals.menu = new Menu();
+        }
+
         public static void Initial_Print(Form1 screen)
         {
             Render.Print_Coordinates(screen, new Point_3d(0, 0, 0));

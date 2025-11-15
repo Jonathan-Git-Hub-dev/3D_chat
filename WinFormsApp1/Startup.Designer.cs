@@ -33,23 +33,26 @@ namespace WinFormsApp1
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Startup));
             Connect_Button = new Button();
             Golden_Button = new Button();
             Soon_Button = new Button();
             Machine_Button = new Button();
-            pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
+            colour_options_pb = new PictureBox();
+            selected_colour_pb = new PictureBox();
             Golden_Icon = new PictureBox();
             label1 = new Label();
             Machine_Icon = new PictureBox();
             Soon_Icon = new PictureBox();
             label2 = new Label();
             Connection_Status = new Label();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            pointer_pb = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)colour_options_pb).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)selected_colour_pb).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Golden_Icon).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Machine_Icon).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Soon_Icon).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pointer_pb).BeginInit();
             SuspendLayout();
             // 
             // Connect_Button
@@ -94,25 +97,26 @@ namespace WinFormsApp1
             Machine_Button.UseVisualStyleBackColor = true;
             Machine_Button.Click += Machine_Button_Click;
             // 
-            // pictureBox1
+            // colour_options_pb
             // 
-            pictureBox1.Location = new Point(257, 281);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(600, 50);
-            pictureBox1.TabIndex = 4;
-            pictureBox1.TabStop = false;
-            pictureBox1.MouseUp += pictureBox1_MouseUp;
+            colour_options_pb.Location = new Point(257, 281);
+            colour_options_pb.Name = "colour_options_pb";
+            colour_options_pb.Size = new Size(600, 25);
+            colour_options_pb.TabIndex = 4;
+            colour_options_pb.TabStop = false;
+            colour_options_pb.MouseUp += pictureBox1_MouseUp;
             // 
-            // pictureBox2
+            // selected_colour_pb
             // 
-            pictureBox2.Location = new Point(203, 281);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(48, 50);
-            pictureBox2.TabIndex = 5;
-            pictureBox2.TabStop = false;
+            selected_colour_pb.Location = new Point(203, 281);
+            selected_colour_pb.Name = "selected_colour_pb";
+            selected_colour_pb.Size = new Size(48, 50);
+            selected_colour_pb.TabIndex = 5;
+            selected_colour_pb.TabStop = false;
             // 
             // Golden_Icon
             // 
+            Golden_Icon.Image = Properties.Resources.Golden;
             Golden_Icon.Location = new Point(203, 70);
             Golden_Icon.Name = "Golden_Icon";
             Golden_Icon.Size = new Size(200, 200);
@@ -130,6 +134,7 @@ namespace WinFormsApp1
             // 
             // Machine_Icon
             // 
+            Machine_Icon.Image = Properties.Resources.Machine;
             Machine_Icon.Location = new Point(430, 70);
             Machine_Icon.Name = "Machine_Icon";
             Machine_Icon.Size = new Size(200, 200);
@@ -138,6 +143,7 @@ namespace WinFormsApp1
             // 
             // Soon_Icon
             // 
+            Soon_Icon.Image = Properties.Resources.Soon;
             Soon_Icon.Location = new Point(657, 70);
             Soon_Icon.Name = "Soon_Icon";
             Soon_Icon.Size = new Size(200, 200);
@@ -161,32 +167,43 @@ namespace WinFormsApp1
             Connection_Status.Size = new Size(0, 25);
             Connection_Status.TabIndex = 13;
             // 
+            // pointer_pb
+            // 
+            pointer_pb.Location = new Point(257, 311);
+            pointer_pb.Name = "pointer_pb";
+            pointer_pb.Size = new Size(9, 20);
+            pointer_pb.TabIndex = 14;
+            pointer_pb.TabStop = false;
+            // 
             // Startup
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(892, 437);
+            Controls.Add(pointer_pb);
             Controls.Add(Connection_Status);
             Controls.Add(label2);
             Controls.Add(Soon_Icon);
             Controls.Add(Machine_Icon);
             Controls.Add(label1);
             Controls.Add(Golden_Icon);
-            Controls.Add(pictureBox2);
-            Controls.Add(pictureBox1);
+            Controls.Add(selected_colour_pb);
+            Controls.Add(colour_options_pb);
             Controls.Add(Machine_Button);
             Controls.Add(Soon_Button);
             Controls.Add(Golden_Button);
             Controls.Add(Connect_Button);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Startup";
-            Text = "Form1";
-            Load += Startup_Load;
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "3D Chat Laucher";
+            ((System.ComponentModel.ISupportInitialize)colour_options_pb).EndInit();
+            ((System.ComponentModel.ISupportInitialize)selected_colour_pb).EndInit();
             ((System.ComponentModel.ISupportInitialize)Golden_Icon).EndInit();
             ((System.ComponentModel.ISupportInitialize)Machine_Icon).EndInit();
             ((System.ComponentModel.ISupportInitialize)Soon_Icon).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pointer_pb).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -197,15 +214,16 @@ namespace WinFormsApp1
             private Button Golden_Button;
             private Button Soon_Button;
             private Button Machine_Button;
-            private PictureBox pictureBox1;
-            private PictureBox pictureBox2;
+            private PictureBox colour_options_pb;
+            private PictureBox selected_colour_pb;
             private PictureBox Golden_Icon;
             private Label label1;
             private PictureBox Machine_Icon;
             private PictureBox Soon_Icon;
             private Label label2;
             private Label Connection_Status;
-        }
+        private PictureBox pointer_pb;
+    }
     
 
 }

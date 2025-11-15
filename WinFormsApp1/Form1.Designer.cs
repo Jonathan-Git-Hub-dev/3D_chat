@@ -82,14 +82,17 @@
             render_worker.WorkerReportsProgress = true;
             render_worker.DoWork += render_worker_DoWork;
             render_worker.ProgressChanged += backgroundWorker1_ProgressChanged;
+            render_worker.WorkerSupportsCancellation = true;
             // 
             // communication_out_worker
             // 
             communication_out_worker.DoWork += communiction_out_worker_DoWork;
+            communication_out_worker.WorkerSupportsCancellation = true;
             // 
             // communication_in_worker
             // 
             communication_in_worker.DoWork += communication_in_worker_DoWork;
+            communication_in_worker.WorkerSupportsCancellation = true;
             // 
             // Form1
             // 

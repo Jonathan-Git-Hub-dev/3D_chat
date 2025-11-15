@@ -7,12 +7,12 @@ namespace WinFormsApp1
     {
         Form1 content;
         public static bool resize_called_on_initialization = true;
-        public static bool first_display = true; 
+        public static bool first_display = true;
         public Menu()
         {
             InitializeComponent();
 
-            DesktopLocation = new Point(500, 500);
+            //DesktopLocation = new Point(500, 500);
 
             //content = passed;
         }
@@ -20,41 +20,27 @@ namespace WinFormsApp1
 
         private void Button_Hide_Click(object sender, EventArgs e)
         {
-           this.WindowState= FormWindowState.Minimized;
-            Globals.showing_menu = true;
+            this.WindowState = FormWindowState.Minimized;
+            Globals.showing_menu = false;
         }
 
         private void Button_Quit_Click(object sender, EventArgs e)
         {
-            //cancel
-            //this.Close();
             Application.Exit();
-
-            //this.Location = new Point(100, 100);
-
         }
 
-        private void Menu_Load(object sender, EventArgs e)
-        {
-            //this.Hide();
-        }
 
-        private void Menu_Shown(object sender, EventArgs e)
-        {
-            Location = new Point(Globals.menu_left_distance, Globals.menu_top_disatnce);
-        }
 
         private void button_minimize_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.No;
             this.WindowState = FormWindowState.Minimized;
             Globals.main_screen.Hide();
-            //this.Hide();
         }
 
         private void Menu_Resize(object sender, EventArgs e)
         {
-            if(resize_called_on_initialization)
+            if (resize_called_on_initialization)
             {
                 resize_called_on_initialization = false;
                 Trace.WriteLine("doin the fisrstsfd");
@@ -63,19 +49,28 @@ namespace WinFormsApp1
             //when is this called
             //on creation  
             Trace.WriteLine("this has been resized (MENU)");
-            if(this.WindowState == FormWindowState.Normal)
+            if (this.WindowState == FormWindowState.Normal)
             {
-                if(first_display)
+                if (first_display)
                 {
                     first_display = false;
                     return;
                 }
-                
-                Trace.WriteLine("have just selected from task bar");
-                Globals.main_screen.Show();
+
+                //esle this tab has been selected from task bar
+                Globals.main_screen.Handle_Display();
             }
 
-        
+
+        }
+
+        private void return_button_Click(object sender, EventArgs e)
+        {
+            //hide both screen
+            Globals.main_screen.Hide();
+            Globals.menu.Hide();
+            Globals.main_screen.deactivate_background_workers();
+            Globals.startup_screen.Show();
         }
     }
 }
