@@ -21,23 +21,17 @@ namespace WinFormsApp1
             Globals.x_default = workingArea.Width / 2;
             Globals.y_default = workingArea.Height / 2;
 
-            Trace.WriteLine("new cent " + Globals.x_default + " " + Globals.y_default);
+            //Trace.WriteLine("new cent " + Globals.x_default + " " + Globals.y_default);
         }
 
-        public static void Structure_Componenets(ref Bitmap bm, Form1 screen)
+        public static void Structure_Componenets(ref Bitmap[] bm, Form1 screen)
         {
             //set up bitmap for rendering
-            bm = new Bitmap(Globals.width, Globals.height); // Create a new Bitmap
+            bm = new Bitmap[2];
+            bm[0] = new Bitmap(Globals.width, Globals.height); // Create a new Bitmap
+            bm[1] = new Bitmap(Globals.width, Globals.height); // Create a new Bitmap
             screen.render_screen.Location = new Point(Globals.left_right_border / 2, Globals.top_border);
             screen.render_screen.Size = new Size(Globals.width, Globals.height);
-
-
-
-            //move labels
-            screen.coordinates_label.Location = new Point(Globals.left_right_border / 2, Globals.height + 4);
-            screen.angle_label.Location = new Point(Globals.left_right_border / 2, Globals.height + 24);
-            screen.fps_label.Location = new Point(Globals.width - 80, Globals.height + 4);
-
         }
 
         public static void Initialize_Menu(ref Menu menu)

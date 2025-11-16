@@ -99,6 +99,7 @@ namespace WinFormsApp1
             // 
             // colour_options_pb
             // 
+            colour_options_pb.Image = Properties.Resources.colour_spread;
             colour_options_pb.Location = new Point(257, 281);
             colour_options_pb.Name = "colour_options_pb";
             colour_options_pb.Size = new Size(600, 25);

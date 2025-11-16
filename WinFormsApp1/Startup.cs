@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -7,6 +10,11 @@ namespace WinFormsApp1
 {
     public partial class Startup : Form
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
+
+
         int chosen_option = 0;
         int[] colour_choice = new int[] { 255, 0, 0 };
         Bitmap ccc = new Bitmap(48, 50);
@@ -16,14 +24,8 @@ namespace WinFormsApp1
             InitializeComponent();
 
             Golden_Button.FlatAppearance.BorderSize = 5; // Sets the border thickness to 5 pixels
-
-            Create_Colour_Input();
-
             Colour_Pic(colour_choice);
 
-
-            //Initialize.Initialize_Menu(ref menu);
-            //Globals.main_screen = new Form1(ref menu);
             Initialize.Initialize_Screen();
 
             //selecter size 9 wide 20 tall
@@ -31,6 +33,10 @@ namespace WinFormsApp1
             Move_Pointer(0);
 
             Globals.startup_screen = this;
+
+            AllocConsole();
+            //Console.WriteLine("hello thi sis our new console");
+            
         }
 
         public void Initialize_Pointer()
@@ -96,29 +102,7 @@ namespace WinFormsApp1
             return new int[] { (int)r, (int)g, (int)b };
         }
 
-        private void Create_Colour_Input()
-        {
-            int width = 600;//width % 6 == 0 makes the math easier 
-            int height = 25;
-
-            colour_options_pb.Width = width;
-            colour_options_pb.Height = height;
-
-            Bitmap bm = new Bitmap(width, height);
-
-            int gaps = 6;
-            
-            for (int i = 0; i < width; i++)
-            {
-                int[] colour = Colour_By_ratio(i, width, gaps);
-
-                for (int j = 0; j < height; j++)
-                {
-                    bm.SetPixel(i, j, Color.FromArgb(255, colour[0], colour[1], colour[2]));
-                }
-            }
-            colour_options_pb.Image = bm;
-        }
+        
 
 
         private async Task<(bool, int, int)> Connect()

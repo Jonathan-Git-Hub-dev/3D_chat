@@ -244,7 +244,8 @@ namespace WinFormsApp1
 
             Vector face_nv = Vector.Normal_Vector(face);
 
-            //Trace.WriteLine(x_start + " " + x_end + "     " + y_start + " " + y_end);
+            //Trace.WriteLine("triangle started to render " + x_start + " " + x_end + "     " + y_start + " " + y_end);
+            //Console.WriteLine("triangle started to render " + x_start + " " + x_end + "     " + y_start + " " + y_end);
 
             for (int x = x_start; x <= x_end; x++)
             {
@@ -270,6 +271,9 @@ namespace WinFormsApp1
                     }
                 }
             }
+
+            //Trace.WriteLine("traignel done rendering");
+            //Console.WriteLine("traignel done rendering");
         }
 
 

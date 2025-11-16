@@ -112,7 +112,7 @@ namespace WinFormsApp1
             int x = e.X + Globals.left_right_border / 2;
             int y = e.Y + Globals.top_border + Globals.top_border - 5;
 
-            Trace.WriteLine("xy " + x + " " + y);//xy 960 509
+            //Trace.WriteLine("xy " + x + " " + y);//xy 960 509
 
             int move_h = x - Globals.x_default;
             int move_v = y - Globals.y_default;
@@ -144,42 +144,6 @@ namespace WinFormsApp1
 
             Cursor.Position = new Point(Globals.x_default, Globals.y_default);
 
-
-
-
-            //center of screen relative to picture box
-            /*Uint x = e.X + Globals.left_right_border / 2;
-            int y = e.Y + Globals.top_border + Globals.ribbon_height;
-
-            int move_h = x - Globals.x_default;
-            int move_v = y - Globals.y_default;
-
-
-            if (move_h == 0 && move_v == 0)
-            {
-                //ignoreable / must ignore as with will generate recursive move events to the same position
-                return;
-            }
-
-            xy_angle += move_h;
-            z_angle += move_v;
-
-
-            //clamping xy
-            if (xy_angle > Globals.maximum_xy_angle)
-            {
-                xy_angle = Globals.minimum_xy_angle + (xy_angle - Globals.maximum_xy_angle);
-            }
-            if (xy_angle < Globals.minimum_xy_angle)
-            {
-                xy_angle = Globals.maximum_xy_angle + xy_angle;
-            }
-
-            //clamp z
-            z_angle = Math.Max(z_angle, Globals.minimum_z_angle);
-            z_angle = Math.Min(z_angle, Globals.maximum_z_angle);
-
-            Cursor.Position = new Point(Globals.x_default, Globals.y_default);*/
         }
     }
 }

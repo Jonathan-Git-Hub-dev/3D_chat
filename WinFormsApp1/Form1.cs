@@ -59,27 +59,9 @@ namespace WinFormsApp1
 
         Point_3d origin = new Point_3d(0, 6, 0);
 
-        Bitmap bm;
+        Bitmap[] bm;
 
         bool cage_mouse = false;
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            /*Initialize.Get_Screen_Size(this);
-            Initialize.Structure_Componenets(ref bm, this);
-            Initialize.Initial_Print(this);*/
-            //Initialize.Initialize_Menu(ref modalForm);
-
-            //this.Hide_Mouse();
-
-
-            /*render_worker.RunWorkerAsync();
-            //communication_out_worker.RunWorkerAsync();
-            if (Globals.new_port != 0)
-            {
-                communication_in_worker.RunWorkerAsync();
-            }*/
-        }
 
         public void activate_background_workers()
         {
@@ -121,12 +103,19 @@ namespace WinFormsApp1
             return; // Exit the DoWork method
         }
 
+        public void Hide_Mouse()//(Form1 screen)
+        {
+            Cursor.Position = new Point(Globals.x_default, Globals.y_default);
+            //Cursor.Hide();
+        }
+
         public void Handle_Display()
         {
             lock (render_lock)
             {//get mutex for bitmap
                 this.Show();
             }
+            Hide_Mouse();
         }
 
         private async void communication_in_worker_DoWork(object sender, DoWorkEventArgs e)
@@ -180,15 +169,30 @@ namespace WinFormsApp1
 
         }
 
-        public void Hide_Mouse()//(Form1 screen)
+
+        public enum Render_State
         {
-            Cursor.Position = new Point(Globals.width / 2 + Globals.left_right_border / 2, Globals.height / 2 + Globals.top_border);
-            Cursor.Hide();
+            Free,
+            Used
         }
 
-        private void render_worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)//, Bitmap bm)
+        Render_State[] render_states = { Render_State.Used, Render_State.Free };
+
+
+        //render to oppisite screen
+        //send signal till switch
+        //start rendering when switched
+
+        //render_index
+        //print_index
+
+
+
+        private void render_worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
+
+            int render_index = 1;
 
             //return;
             DateTimeOffset now;
@@ -196,12 +200,13 @@ namespace WinFormsApp1
 
             long[] span_array = Render.Initialize_Span_Ring_Array();
 
-
-            //Thread.Sleep(2000);
-
             int pass_xy_angle;
             int pass_z_angle;
             Point_3d pass_origin;
+
+
+            //int render_to = 1;
+
 
             Asset_Instance[] pass_players = new Asset_Instance[Globals.max_users];
             for (int i = 0; i < Globals.max_users; i++)
@@ -209,34 +214,28 @@ namespace WinFormsApp1
                 pass_players[i] = new Asset_Instance();
             }
 
-            //Thread.Sleep(2000);
-
             while (!worker.CancellationPending)//true
             {
 
-
+                //Console.WriteLine("started render sequence");
+                Console.WriteLine("started render sequence " + render_index);
                 while (true)
                 {
-                    bool temp = false;
                     lock (render_lock)
                     {
-                        //Trace.WriteLine("1 acc");
-                        if (rendered)
-                        {
-                            temp = true;
-                        }
+                        
                         //Trace.WriteLine("1 rell");
+                        if (render_states[render_index] != Render_State.Used)
+                        {
+                            break;
+                        }
                     }
 
-                    if (temp)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Thread.Sleep(100);//sleep so bit map can be used
-                    }
+                    Thread.Sleep(100);//sleep so bit map can be used
+                    //not a great system
                 }
+
+                Console.WriteLine("got data for render sequence");
 
                 //Trace.WriteLine("watiig for v l");
                 lock (variable_lock)
@@ -256,48 +255,61 @@ namespace WinFormsApp1
                 //Trace.WriteLine("got v l");
 
                 start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                //Trace.WriteLine("w rl");
-                lock (render_lock)
-                {
-                    //Trace.WriteLine("2 acc");
-                    Render.Render_Assets(pass_players, pass_xy_angle, pass_z_angle, pass_origin, ref bm);
-                    rendered = false;
-                    //Trace.WriteLine("2 rell");
-                }
-                //Trace.WriteLine("g wl");
+
+                Console.WriteLine("got to before the render function");
+
+                Render.Render_Assets(pass_players, pass_xy_angle, pass_z_angle, pass_origin, ref bm[render_index]);
+                
                 stop = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 long span = stop - start;
 
                 long fps = 1000 / Render.Span_Ring_Array(ref span_array, span);
 
-                //rendered = false;
-                //Trace.WriteLine("start call");
+        
 
                 DateTime currentTime = DateTime.Now;
                 //Trace.WriteLine($"Current time: {currentTime.ToString("HH:mm:ss")}");
                 render_worker.ReportProgress((int)span);
-                //Trace.WriteLine("end call");
-                //Monitor.Wait(render_lock);
 
-                //Monitor.Exit(render_lock)
+                lock (render_lock)
+                {
+                    render_states[render_index] = Render_State.Used;
+                }
 
-            }
+                render_index++;
+                render_index %= 2;
+
+                
+
+                    Console.WriteLine("ended render sequence");
+
+        }
             e.Cancel = true; // Indicate that the operation was cancelled
             Trace.WriteLine("render workder done " + DateTime.Now.ToLongTimeString());
+
             return; // Exit the DoWork method
         }
 
-
+        //this should be reset every time this screen is called by startup
+        int print_index = 1;
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //Trace.WriteLine("start print");
+            // Render_State[] render_states = { Render_State.Used, Render_State.Free };
+
+            //Trace.WriteLine("3 acc");
+            render_screen.Image = bm[print_index];
+            rendered = true;
+
+            print_index++;
+            print_index %= 2;
+
+
+            //unleash other screen
             lock (render_lock)
             {
-                //Trace.WriteLine("3 acc");
-                this.render_screen.Image = bm;
-                rendered = true;
-                //Trace.WriteLine("3 rel");
+                render_states[print_index] = Render_State.Free;
             }
+
             fps_label.Text = "FPS: ~" + e.ProgressPercentage.ToString();
         }
 

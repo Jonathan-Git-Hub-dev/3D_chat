@@ -40,9 +40,10 @@
             // 
             // angle_label
             // 
+            angle_label.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             angle_label.AutoSize = true;
             angle_label.ForeColor = Color.White;
-            angle_label.Location = new Point(12, 950);
+            angle_label.Location = new Point(12, 954);
             angle_label.Name = "angle_label";
             angle_label.Size = new Size(88, 25);
             angle_label.TabIndex = 5;
@@ -59,9 +60,10 @@
             // 
             // coordinates_label
             // 
+            coordinates_label.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             coordinates_label.AutoSize = true;
             coordinates_label.ForeColor = Color.White;
-            coordinates_label.Location = new Point(12, 920);
+            coordinates_label.Location = new Point(12, 929);
             coordinates_label.Name = "coordinates_label";
             coordinates_label.Size = new Size(175, 25);
             coordinates_label.TabIndex = 11;
@@ -69,9 +71,10 @@
             // 
             // fps_label
             // 
+            fps_label.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             fps_label.AutoSize = true;
             fps_label.ForeColor = Color.White;
-            fps_label.Location = new Point(1092, 932);
+            fps_label.Location = new Point(1106, 954);
             fps_label.Name = "fps_label";
             fps_label.Size = new Size(60, 25);
             fps_label.TabIndex = 12;
@@ -80,19 +83,19 @@
             // render_worker
             // 
             render_worker.WorkerReportsProgress = true;
+            render_worker.WorkerSupportsCancellation = true;
             render_worker.DoWork += render_worker_DoWork;
             render_worker.ProgressChanged += backgroundWorker1_ProgressChanged;
-            render_worker.WorkerSupportsCancellation = true;
             // 
             // communication_out_worker
             // 
-            communication_out_worker.DoWork += communiction_out_worker_DoWork;
             communication_out_worker.WorkerSupportsCancellation = true;
+            communication_out_worker.DoWork += communiction_out_worker_DoWork;
             // 
             // communication_in_worker
             // 
-            communication_in_worker.DoWork += communication_in_worker_DoWork;
             communication_in_worker.WorkerSupportsCancellation = true;
+            communication_in_worker.DoWork += communication_in_worker_DoWork;
             // 
             // Form1
             // 
@@ -108,7 +111,6 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
             KeyDown += Form1_KeyDown;
             Resize += Form1_Resize;
             ((System.ComponentModel.ISupportInitialize)render_screen).EndInit();
