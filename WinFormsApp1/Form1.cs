@@ -39,7 +39,7 @@ namespace WinFormsApp1
             Initialize.Structure_Componenets(ref bm, this);
             Initialize.Initial_Print(this);
 
-            players[3].online = true;
+            //players[3].online = true;
 
 
             //this.Hide_Mouse();
@@ -218,7 +218,7 @@ namespace WinFormsApp1
             {
 
                 //Console.WriteLine("started render sequence");
-                Console.WriteLine("started render sequence " + render_index);
+                //Console.WriteLine("started render sequence " + render_index);
                 while (true)
                 {
                     lock (render_lock)
@@ -235,7 +235,7 @@ namespace WinFormsApp1
                     //not a great system
                 }
 
-                Console.WriteLine("got data for render sequence");
+                //Console.WriteLine("got data for render sequence");
 
                 //Trace.WriteLine("watiig for v l");
                 lock (variable_lock)
@@ -256,10 +256,12 @@ namespace WinFormsApp1
 
                 start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-                Console.WriteLine("got to before the render function");
+                //Console.WriteLine("got to before the render function");
 
                 Render.Render_Assets(pass_players, pass_xy_angle, pass_z_angle, pass_origin, ref bm[render_index]);
-                
+
+                //Console.WriteLine("ended render sequence");
+
                 stop = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 long span = stop - start;
 
@@ -281,7 +283,7 @@ namespace WinFormsApp1
 
                 
 
-                    Console.WriteLine("ended render sequence");
+                
 
         }
             e.Cancel = true; // Indicate that the operation was cancelled
@@ -358,7 +360,7 @@ namespace WinFormsApp1
             lock (variable_lock)
             {
                 Movement.Handle_Movement(ref origin, xy_angle, e);
-                //Render.Print_Coordinates(this, origin);
+                Render.Print_Coordinates(this, origin);
             }
         }
 

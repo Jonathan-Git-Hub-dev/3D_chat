@@ -236,15 +236,39 @@ namespace WinFormsApp1
 
         public void Earliest_Midpoint(Point_3d origin, Vector nv, Point_3d reference)
         {
+            int i = 0;
             //move point until it reaches the front of our plane
             //using binary search with a know from point
+            //int i = 0;
             do
             {
-                x = Math.Min(x, reference.x) + Math.Abs(x - reference.x) / 2;
-                y = Math.Min(y, reference.y) + Math.Abs(y - reference.y) / 2;
-                z = Math.Min(z, reference.z) + Math.Abs(z - reference.z) / 2;
+                //i++;
+                //Random random = new Random();
 
-            } while (Face.Infront(this, origin, nv));
+                
+
+                // Generate a random integer less than 100
+                //int randomNumber2 = random.Next(10000000);
+
+
+                //i++;
+                /*x = Math.Min(x, reference.x) + Math.Abs(x - reference.x) / 2;
+                y = Math.Min(y, reference.y) + Math.Abs(y - reference.y) / 2;
+                z = Math.Min(z, reference.z) + Math.Abs(z - reference.z) / 2;*/
+
+                x = (x + reference.x) / 2;
+                y = (y + reference.y) / 2;
+                z = (z + reference.z) / 2;
+
+                //if(randomNumber2 == 77)
+                /*Console.WriteLine("\t\t\t after change " + ToString());
+
+                if(i == 100)
+                {
+                    Thread.Sleep(100000);
+                    //break;
+                }*/
+            } while (!Face.Infront(this, origin, nv));
         }
 
         public void Relative_Point(Point_3d middle, Point_3d origin)

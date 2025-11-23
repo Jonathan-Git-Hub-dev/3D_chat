@@ -40,12 +40,14 @@ namespace WinFormsApp1
         }
         public static void Keep_Player_In_Playable_Area(ref Point_3d origin)
         {
-            Math.Max(origin.x, Globals.x_negative_boarder);
-            Math.Min(origin.x, Globals.x_positive_boarder);
-            Math.Max(origin.y, Globals.y_negative_boarder);
-            Math.Min(origin.y, Globals.y_positive_boarder);
-            Math.Max(origin.z, Globals.z_negative_boarder);
-            Math.Min(origin.z, Globals.z_positive_boarder);
+            origin.x = Math.Max(origin.x, Globals.x_negative_boarder);
+            origin.x = Math.Min(origin.x, Globals.x_positive_boarder);
+            origin.y = Math.Max(origin.y, Globals.y_negative_boarder);
+            origin.y = Math.Min(origin.y, Globals.y_positive_boarder);
+            origin.z = Math.Max(origin.z, Globals.z_negative_boarder);
+            origin.z = Math.Min(origin.z, Globals.z_positive_boarder);
+
+            Console.WriteLine(origin.ToString());
         }
 
         public static void Handle_Movement(ref Point_3d origin, int xy_angle, KeyEventArgs e)

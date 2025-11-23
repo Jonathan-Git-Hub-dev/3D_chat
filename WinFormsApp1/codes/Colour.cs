@@ -32,6 +32,11 @@ namespace WinFormsApp1
 
             double percent = (2 - dist) / 2;
 
+            if(percent < 0)
+            {
+                Console.WriteLine("error here " + percent);
+            }
+
             double percent2 = 0.9 * percent + 0.1;
 
             double red = colour.red * percent2;

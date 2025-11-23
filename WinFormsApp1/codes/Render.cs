@@ -228,6 +228,7 @@ namespace WinFormsApp1
 
             Colour cc = Colour.Colour_By_Anlge(face, outside, colour);
             Color final_colour = Color.FromArgb(cc.red, cc.green, cc.blue);
+            //Color final_colour = Color.FromArgb(10, 90, 40);
 
 
             //find bouding box
@@ -298,15 +299,25 @@ namespace WinFormsApp1
         //public static Point_3d 
         public static bool Translate_Face_2d(ref Screen_Point a, ref Screen_Point b, ref Screen_Point c, Face face, Point_3d origin, int xy_angle, Vector nv, Vector h_v, Vector v_v)
         {
+            //Console.WriteLine("\t\tTranslate_Face 1");
+
+            //Console.WriteLine("origin: " + origin.ToString());
+            //Console.WriteLine("angles xy, z" + xy_angle);
+
+
             //check if all points behind using plane equations
             bool p1_infront = Face.Infront(face.p1, origin, nv);
             bool p2_infront = Face.Infront(face.p2, origin, nv);
             bool p3_infront = Face.Infront(face.p3, origin, nv);
 
+            //Console.WriteLine("p1 + status " + face.p1.ToString() +  " " + p1_infront);
+            //Console.WriteLine("p2 + status " + face.p2.ToString() + " " + p2_infront);
+            //Console.WriteLine("p3 + status " + face.p3.ToString() + " " + p3_infront);
 
 
             if (!p1_infront && !p2_infront && !p3_infront)
             {
+                Console.WriteLine("\t\tTranslate_Face 1.1");
                 return false; //no points are infront of screen so impossible to have any renderign effect
             }
 
@@ -320,69 +331,91 @@ namespace WinFormsApp1
             }
             else if (p2_infront)
             {
-                reference = face.p1;
+                reference = face.p2;
             }
             else
             {//p3
-                reference = face.p1;
+                reference = face.p3;
             }
 
             Screen_Point reference_point = new Screen_Point();
             reference_point.Translate_2d(origin, reference, xy_angle, nv, h_v, v_v);
             //for points not on screen
 
+            //Console.WriteLine("\t\tTranslate_Face 2");
             //get all points
 
             if (p1_infront)
             {
+                //Console.WriteLine("\t\tTranslate_Face 2.1");
                 a.Translate_2d(origin, face.p1, xy_angle, nv, h_v, v_v);
+                //Console.WriteLine("\t\tTranslate_Face 2.2");
             }
             else
             {
+                //Console.WriteLine(p1_infront + " " + p2_infront + " " + p3_infront);
+                //Console.WriteLine("\t\tTranslate_Face 2.3 " + face.p1.ToString() + " " + xy_angle + " " + reference.ToString());
                 //get aproximate point extrapolate to near infinity
                 face.p1.Earliest_Midpoint(origin, nv, reference);
+                //Console.WriteLine("\t\tTranslate_Face 2.4");
                 //plot out new point 
                 a.Translate_2d(origin, face.p1, xy_angle, nv, h_v, v_v);
+                //Console.WriteLine("\t\tTranslate_Face 2.5");
                 //mody a by gradient
                 a.Extrapolate(reference_point);
+                //Console.WriteLine("\t\tTranslate_Face 2.6");
             }
-
+            //Console.WriteLine("\t\tTranslate_Face 3");
             if (p2_infront)
             {
+                //Console.WriteLine("\t\tTranslate_Face 3.1");
                 b.Translate_2d(origin, face.p2, xy_angle, nv, h_v, v_v);
+                //Console.WriteLine("\t\tTranslate_Face 3.2");
             }
             else
             {
+                //Console.WriteLine(p1_infront + " " + p2_infront + " " + p3_infront);
+                //Console.WriteLine("\t\tTranslate_Face 3.3 " + face.p2.ToString() + " " + xy_angle + " " + reference.ToString());
                 //get aproximate point extrapolate to near infinity
                 face.p2.Earliest_Midpoint(origin, nv, reference);
+                //Console.WriteLine("\t\tTranslate_Face 3.4");
                 //plot out new point 
                 b.Translate_2d(origin, face.p2, xy_angle, nv, h_v, v_v);
+                //Console.WriteLine("\t\tTranslate_Face 3.5");
                 //mody a by gradient
                 b.Extrapolate(reference_point);
+                //Console.WriteLine("\t\tTranslate_Face 3.6");
             }
-
+            //Console.WriteLine("\t\tTranslate_Face 4");
+            
             if (p3_infront)
             {
+                //Console.WriteLine("\t\tTranslate_Face 4.1");
                 c.Translate_2d(origin, face.p3, xy_angle, nv, h_v, v_v);
+                //Console.WriteLine("\t\tTranslate_Face 4.2");
             }
             else
             {
+                //Console.WriteLine(p1_infront + " " + p2_infront + " " + p3_infront);
+                //Console.WriteLine("\t\tTranslate_Face 4.3 " + face.p3.ToString() + " " + xy_angle + " " +  reference.ToString());
                 //get aproximate point extrapolate to near infinity
                 face.p3.Earliest_Midpoint(origin, nv, reference);
+                //Console.WriteLine("\t\tTranslate_Face 4.4");
                 //plot out new point 
                 c.Translate_2d(origin, face.p3, xy_angle, nv, h_v, v_v);
+                //Console.WriteLine("\t\tTranslate_Face 4.5");
                 //mody a by gradient
                 c.Extrapolate(reference_point);
+                //Console.WriteLine("\t\tTranslate_Face 4.6");
             }
 
-
+            //Console.WriteLine("\t\tTranslate_Face 5");
 
             return true;
         }
 
         public static void Render_Assets(Asset_Instance[] temp, int xy_angle, int z_angle, Point_3d origin, ref Bitmap bm)
         {
-            //Trace.WriteLine("ra 1");
             double[,] best = new double[Globals.width, Globals.height];
             Clear_Screen(bm);
 
@@ -399,23 +432,23 @@ namespace WinFormsApp1
             //Trace.WriteLine("ra 3");
 
 
+            //Console.WriteLine("Render Assets 1");
             for (int i = 0; i < Globals.max_users; i++)
             {
-                //Trace.WriteLine("ra 3.1");
                 if (i != Globals.id && temp[i].online)
                 {
                     Render_An_Asset(temp[i], xy_angle, z_angle, origin, ref bm, ref best, nv, horizontal_vector, vertical_vector, top_left);
                 }
-                //Trace.WriteLine("ra 3.2");
-
             }
-            //Trace.WriteLine("ra 4");
+            //Console.WriteLine("Render Assets 2");
         }
         public static void Render_An_Asset(Asset_Instance temp, int xy_angle, int z_angle, Point_3d origin, ref Bitmap bm, ref double[,] best, Vector nv, Vector h_v, Vector v_v, Point_3d tl)
         {
+            //Console.WriteLine("\tRender AA pre loop");
             for (int i = 0; i < Form1.assets[temp.asset_index].faces.Length; i++)
             {
-                //Trace.WriteLine("( 1 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
+                //Console.WriteLine("s1");
+                //Console.WriteLine("\tRender AA 1");
                 Point_3d inside = Form1.assets[temp.asset_index].internal_points[i].Copy();
                 Point_3d outside = Form1.assets[temp.asset_index].external_points[i].Copy();
 
@@ -429,30 +462,33 @@ namespace WinFormsApp1
                 {
                     continue;
                 }
+                //Console.WriteLine("\tRender AA 1.1");
 
-                //Trace.WriteLine("( 2 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
 
                 Face face_t = Form1.assets[temp.asset_index].faces[i].Copy();
                 face_t.Translate_Face(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
-
+                
 
                 Screen_Point a = new Screen_Point();
                 Screen_Point b = new Screen_Point();
                 Screen_Point c = new Screen_Point();
 
+                //Console.WriteLine("\tRender AA 1.2");
+
                 if (!Translate_Face_2d(ref a, ref b, ref c, face_t, origin, xy_angle, nv, h_v, v_v))//face generates no on screen gemetries
                 {
-                    //Trace.WriteLine("skipping");
+                    //Console.WriteLine("\tRender AA 1.3");
                     continue;
                 }
-                //Trace.WriteLine("not skipp" + xy_angle/100);
-                //Trace.WriteLine("( 9 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
 
-                //Trace.WriteLine("( ts ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
+                //Console.WriteLine("\tRender AA 2");
+
                 Render_Triangle(a, b, c, face_t, outside, temp.colour, origin, xy_angle, nv, best, bm, tl);
-                //Trace.WriteLine("( 10 ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
-                //Trace.WriteLine("( te ) i out of " + i + " " + Form1.assets[temp.asset_index].faces.Length);
+
+               // Console.WriteLine("\tRender AA 3");
+
             }
+            //Console.WriteLine("\tRender AA Post loop");
         }
 
 

@@ -85,6 +85,7 @@ namespace WinFormsApp1
             Soon_Button.TabIndex = 2;
             Soon_Button.Text = "Cooming soon";
             Soon_Button.UseVisualStyleBackColor = true;
+            Soon_Button.Click += Soon_Button_Click;
             // 
             // Machine_Button
             // 

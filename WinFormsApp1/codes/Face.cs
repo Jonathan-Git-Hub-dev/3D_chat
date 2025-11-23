@@ -266,7 +266,13 @@ namespace WinFormsApp1
         public static bool Infront(Point_3d point, Point_3d reference, Vector nv)
         {
             double reference_d = Face.Plane_Equation(nv, reference, Point_3d.Point_Plus_Vector(reference, nv));
+
+            
             double point_d = Face.Plane_Equation(nv, reference, point);
+
+            //Console.WriteLine(point_d + " " + reference_d);
+            //Console.WriteLine(Point_3d.Point_Plus_Vector(reference, nv).ToString());
+
 
             if (reference_d > 0 && point_d >= 0)//if on the plane its fine
             {

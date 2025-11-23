@@ -36,18 +36,23 @@ namespace WinFormsApp1
 
             AllocConsole();
             //Console.WriteLine("hello thi sis our new console");
-            
+
+            /*Vector nv = Vector.Normal_Vector_Angle(8000, 0);
+            Console.WriteLine(nv.delta_x + " " + nv.delta_y + " " + nv.delta_z);
+
+            bool temp = Face.Infront(new Point_3d(0.8815380000000002, 0.646849, -3.075), new Point_3d(0,6,0), nv);
+            Console.WriteLine(temp);*/
         }
 
         public void Initialize_Pointer()
         {
             Bitmap bitmap = new Bitmap(Globals.asset_folder_2d + "Pointer.png");
 
-            for (int x=0; x<9; x++)
+            for (int x = 0; x < 9; x++)
             {
-                for(int y=0; y<20; y++)
+                for (int y = 0; y < 20; y++)
                 {
-                    if(bitmap.GetPixel(x,y).R == 255)
+                    if (bitmap.GetPixel(x, y).R == 255)
                     {
                         ////bitmap.SetPixel()
                         bitmap.MakeTransparent(bitmap.GetPixel(x, y));
@@ -64,7 +69,7 @@ namespace WinFormsApp1
             int offset = (pointer_width - 1) / 2;
             int base_index = colour_options_pb.Location.X;
 
-            pointer_pb.Location = new Point( base_index + index - offset, pointer_pb.Location.Y);
+            pointer_pb.Location = new Point(base_index + index - offset, pointer_pb.Location.Y);
         }
 
 
@@ -102,7 +107,7 @@ namespace WinFormsApp1
             return new int[] { (int)r, (int)g, (int)b };
         }
 
-        
+
 
 
         private async Task<(bool, int, int)> Connect()
@@ -153,13 +158,13 @@ namespace WinFormsApp1
 
 
             //info about our instance
-            /*(bool status, int id, int new_port) data = await Connect();
+            (bool status, int id, int new_port) data = await Connect();
 
             if (!data.status)
             {
                 Connection_Status.Text = "Failed to connect, try again later";
                 return;
-            }*/
+            }
 
 
             //Form1 newForm = new Form1(data.id, data.new_port, chosen_option, colour_choice); // Create an instance of Form2
@@ -167,10 +172,10 @@ namespace WinFormsApp1
             //newForm.Show();
 
             //save users data to globals
-            //Globals.id = data.id;
-            Globals.id = 0;
-            //Globals.new_port = data.new_port;
-            Globals.new_port = 0;
+            Globals.id = data.id;
+            //Globals.id = 0;
+            Globals.new_port = data.new_port;
+            //Globals.new_port = 0;
             Globals.chosen_option = chosen_option;
             //Globals.colour_choice = colour_choice;
             Globals.colour_choice = new Colour(colour_choice);
@@ -211,13 +216,18 @@ namespace WinFormsApp1
             //else position inside of bit map selected
 
             int[] colour = Colour_By_ratio(e.X, 600, 6);
-            
+
             colour_choice[0] = colour[0];
             colour_choice[1] = colour[1];
             colour_choice[2] = colour[2];
             Colour_Pic(colour_choice);
 
             Move_Pointer(e.X);
+        }
+
+        private void Soon_Button_Click(object sender, EventArgs e)
+        {
+            //Globals.main_screen.deactivate_background_workers();
         }
     }
 }
