@@ -179,9 +179,11 @@ namespace WinFormsApp1
                 curr_ang = 270 + Utility.Atan(Math.Abs(y - middle.y), Math.Abs(x - middle.x));
             }
 
+            //Console.WriteLine("calced algle " + curr_ang);
             //add modifer anlge
             curr_ang += (angle / Globals.scaling);
             curr_ang %= 360;
+            //Console.WriteLine("new ange " + curr_ang);
 
             //translate to new point
             double new_x;
@@ -285,7 +287,19 @@ namespace WinFormsApp1
         public void Translate_Point(Point_3d middle, int angle, Point_3d origin)
         {
             this.Rotate_Point(middle, angle);
-            this.Relative_Point(middle, origin);
+            //this.Relative_Point(middle, origin);
         }
+
+        /*public void Translate_Point2(Point_3d middle, int angle, Point_3d origin)
+        {
+            Console.WriteLine("origin " + origin.ToString());
+            Console.WriteLine("angle " + angle);
+            Console.WriteLine("middle " + middle.ToString());
+            Console.WriteLine("pre " + this.ToString());
+            this.Rotate_Point(middle, angle);
+            Console.WriteLine("mid " + this.ToString());
+            this.Relative_Point(middle, origin);
+            Console.WriteLine("post " + this.ToString());
+        }*/
     }
 }

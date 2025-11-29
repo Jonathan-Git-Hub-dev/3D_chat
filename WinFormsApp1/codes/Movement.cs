@@ -47,7 +47,7 @@ namespace WinFormsApp1
             origin.z = Math.Max(origin.z, Globals.z_negative_boarder);
             origin.z = Math.Min(origin.z, Globals.z_positive_boarder);
 
-            Console.WriteLine(origin.ToString());
+            //Console.WriteLine(origin.ToString());
         }
 
         public static void Handle_Movement(ref Point_3d origin, int xy_angle, KeyEventArgs e)

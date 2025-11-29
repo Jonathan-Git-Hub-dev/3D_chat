@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace WinFormsApp1
 {
@@ -444,11 +445,10 @@ namespace WinFormsApp1
         }
         public static void Render_An_Asset(Asset_Instance temp, int xy_angle, int z_angle, Point_3d origin, ref Bitmap bm, ref double[,] best, Vector nv, Vector h_v, Vector v_v, Point_3d tl)
         {
-            //Console.WriteLine("\tRender AA pre loop");
+            //Console.WriteLine("\tour index that is breaking \t" + temp.asset_index);
             for (int i = 0; i < Form1.assets[temp.asset_index].faces.Length; i++)
             {
-                //Console.WriteLine("s1");
-                //Console.WriteLine("\tRender AA 1");
+                               //Console.WriteLine("\tRender AA 1");
                 Point_3d inside = Form1.assets[temp.asset_index].internal_points[i].Copy();
                 Point_3d outside = Form1.assets[temp.asset_index].external_points[i].Copy();
 
@@ -462,8 +462,6 @@ namespace WinFormsApp1
                 {
                     continue;
                 }
-                //Console.WriteLine("\tRender AA 1.1");
-
 
                 Face face_t = Form1.assets[temp.asset_index].faces[i].Copy();
                 face_t.Translate_Face(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
@@ -482,6 +480,41 @@ namespace WinFormsApp1
                 }
 
                 //Console.WriteLine("\tRender AA 2");
+                //Console.WriteLine("Test dist new" + Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)));
+                if(Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)) > 1.1 )
+                {
+                    //Console.WriteLine("Test dist" + Point_3d.Unsquared_Distance(Form1.assets[temp.asset_index].external_points[i], Face.Middle(Form1.assets[temp.asset_index].faces[i])));
+                    //Console.WriteLine("Test dist new" + Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)));
+
+                    //Console.WriteLine("originla outdise point" + Form1.assets[temp.asset_index].external_points[i].ToString());
+                    //Console.WriteLine()
+
+                    //Console.WriteLine("rotation values" + Form1.assets[temp.asset_index].middle.ToString() + " " + temp.angle + " " + temp.origin.ToString());
+
+
+                    Point_3d outside2 = Form1.assets[temp.asset_index].external_points[i].Copy();
+
+                    
+                    //outside2.Translate_Point2(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
+
+                    //Console.WriteLine("originl points");
+                    //Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p1.ToString());
+                    //Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p2.ToString());
+                    //Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p3.ToString());
+
+                    //Console.WriteLine("after points");
+                    //Console.WriteLine(face_t.p1.ToString());
+                    //Console.WriteLine(face_t.p2.ToString());
+                    //Console.WriteLine(face_t.p3.ToString());
+
+                    //Console.WriteLine("o outside");
+                    //Console.WriteLine(Form1.assets[temp.asset_index].external_points[i].ToString());
+                    //Console.WriteLine("a outside");
+                    //Console.WriteLine(outside.ToString());
+
+
+
+                }
 
                 Render_Triangle(a, b, c, face_t, outside, temp.colour, origin, xy_angle, nv, best, bm, tl);
 

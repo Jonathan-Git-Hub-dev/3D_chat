@@ -82,19 +82,20 @@ namespace WinFormsApp1
 
         private void communiction_out_worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            //Console.WriteLine("first");
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            
+            UdpClient udpClient = new UdpClient();
 
-                UdpClient udpClient = new UdpClient();
-
-            while (worker.CancellationPending)
+            while (!worker.CancellationPending)
             {
                 //get our data use a mutex
                 string message = Communications.Encode_User_statistic(origin, xy_angle, Globals.colour_choice, Globals.chosen_option);
+                Console.WriteLine("seinding data " + message);
+                //Console.WriteLine("sent " + Globals.chosen_option);
                 byte[] data = Encoding.UTF8.GetBytes(message);
 
-
+                //Console.WriteLine("Sending");
                 udpClient.Send(data, data.Length, Globals.server_ip, Globals.new_port);
                 Thread.Sleep(1000);
             }
@@ -129,12 +130,16 @@ namespace WinFormsApp1
             byte[] data2 = Encoding.UTF8.GetBytes(message);
 
             // Specify the remote endpoint (IP address and port)
-            int remotePort = 8081;
+            //int remotePort = 8081;
             //Trace.WriteLine(udp_port + " " + remotePort);
 
 
             // Send the data
-            udpClient.Send(data2, data2.Length, Globals.server_ip, remotePort);
+            //Console.WriteLine("this is our port " + Globals.new_port);
+            udpClient.Send(data2, data2.Length, Globals.server_ip, Globals.new_port);
+            //Console.WriteLine("this is our port after" + Globals.new_port);
+
+
 
 
             //we send the first udp message then active
@@ -144,20 +149,24 @@ namespace WinFormsApp1
             //Trace.WriteLine($"UDP message sent to {Globals.server_ip}:{remotePort}");
             while (!worker.CancellationPending)
             {
+                //Console.WriteLine("before in");
                 UdpReceiveResult result = await udpClient.ReceiveAsync();
+                //Console.WriteLine("after in");
                 byte[] receiveBytes = result.Buffer;
                 string returnData = Encoding.ASCII.GetString(receiveBytes);
+
+                Console.WriteLine("data recieved " + returnData);
                 //Trace.WriteLine("we recieved: " + returnData);
 
                 lock (variable_lock)
                 {
-                    //Communications.Decode_S(returnData, ref players);
+                    Communications.Decode_S(returnData, ref players);
                 }
 
                 /*for(int i=0; i<Globals.max_users; i++)
                 {
                     players[i].Print();
-                    Trace.WriteLine("");
+                    Console.WriteLine("");
                 }*/
             }
 
@@ -287,7 +296,7 @@ namespace WinFormsApp1
 
         }
             e.Cancel = true; // Indicate that the operation was cancelled
-            Trace.WriteLine("render workder done " + DateTime.Now.ToLongTimeString());
+            //Trace.WriteLine("render workder done " + DateTime.Now.ToLongTimeString());
 
             return; // Exit the DoWork method
         }

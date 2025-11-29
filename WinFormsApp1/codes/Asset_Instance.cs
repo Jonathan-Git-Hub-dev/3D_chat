@@ -47,9 +47,9 @@ namespace WinFormsApp1
 
         public void Print()
         {
-            Trace.WriteLine("ai: " + asset_index + ", angle: " + angle + ", online: " + (online ? "true" : "false"));
-            origin.Print_Point();
-            Trace.WriteLine(colour.ToString());
+            Console.WriteLine("ai: " + asset_index + ", angle: " + angle + ", online: " + (online ? "true" : "false"));
+            //origin.Print_Point();
+            //Console.WriteLine(colour.ToString());
         }
     }
 }

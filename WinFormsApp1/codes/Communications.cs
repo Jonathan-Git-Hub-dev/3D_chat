@@ -27,8 +27,17 @@ namespace WinFormsApp1
                 int asset = Decode_Asset(data[3]);
                 bool online = Decode_Online(data[4]);
 
-                players[i].Update(origin, colour, angle, asset, online);
 
+                //if (i == 3)
+                //{
+                //    players[i].Update(new Point_3d(-30, 0, -5), new Colour(255, 0, 0), angle, 0, true);
+                //}
+                //else
+                //{
+                    players[i].Update(origin, colour, angle, asset, online);
+                //}
+
+                //Console.WriteLine(players[i].online);
             }
         }//we recieved: 0.000000,0.000000,0.000000 0 153,255,0 0 1$-1.000000,-3.000000,1.000000 5000 200,200,10 1 1$-1.000000,-1.000000,-1.000000 -1 -1,-1,-1 -1 0$-1.000000,-1.000000,-1.000000 -1 -1,-1,-1 -1 0
         //point, angle, colour, asset, online

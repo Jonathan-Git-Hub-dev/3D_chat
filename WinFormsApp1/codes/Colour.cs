@@ -24,7 +24,7 @@ namespace WinFormsApp1
         {
             //new algo
             Point_3d mid = Face.Middle(face);
-            Vector nv = Vector.Vector_Between_Points(mid, outside);
+            //Vector nv = Vector.Vector_Between_Points(mid, outside);
 
             Point_3d besty = Point_3d.Point_Plus_Vector(mid, Globals.lightest_vector);
 
@@ -32,16 +32,25 @@ namespace WinFormsApp1
 
             double percent = (2 - dist) / 2;
 
-            if(percent < 0)
+            /*if(percent < 0)
             {
                 Console.WriteLine("error here " + percent);
-            }
+            }*/
 
             double percent2 = 0.9 * percent + 0.1;
 
             double red = colour.red * percent2;
             double green = colour.green * percent2;
             double blue = colour.blue * percent2;
+
+            if(red < 0 || green < 0 || blue < 0)
+            {
+                Console.WriteLine("we have and impossible colour");
+                Console.WriteLine("dist " + dist);
+
+                Console.WriteLine("d1 " + Point_3d.Unsquared_Distance(mid, besty));
+                Console.WriteLine("d2 " + Point_3d.Unsquared_Distance(mid, outside));
+            }
 
 
             return new Colour((int)red, (int)green, (int)blue);
