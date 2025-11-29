@@ -318,7 +318,7 @@ namespace WinFormsApp1
 
             if (!p1_infront && !p2_infront && !p3_infront)
             {
-                Console.WriteLine("\t\tTranslate_Face 1.1");
+                //Console.WriteLine("\t\tTranslate_Face 1.1");
                 return false; //no points are infront of screen so impossible to have any renderign effect
             }
 

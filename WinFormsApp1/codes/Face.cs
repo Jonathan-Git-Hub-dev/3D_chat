@@ -209,7 +209,7 @@ namespace WinFormsApp1
             List<Point_3d> points = new List<Point_3d>();
 
             //get the two shared points
-            foreach (KeyValuePair<Point_3d, int> kvp in tally)
+            foreach (KeyValuePaiFr<Point_3d, int> kvp in tally)
             {
                 if (kvp.Value == 2)
                 {

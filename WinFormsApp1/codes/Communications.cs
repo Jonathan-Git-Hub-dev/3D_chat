@@ -9,7 +9,9 @@ namespace WinFormsApp1
             message += " " + xy_angle.ToString();
             message += " " + colour.ToString();
             message += " " + asset_choice;
+            message += " " + Globals.counter;
 
+            Globals.counter++;
             return message;
         }
 

@@ -41,6 +41,8 @@ namespace WinFormsApp1
 
         public static int max_users = 4;
 
+        public static int counter = 0;
+
         //colour
         //public static Vector brightest = new Vector(0.58, 0.58, -0.58);
 
