@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 #include "j_user_info.h"
 
@@ -36,6 +37,8 @@ void create_user_data(struct user_data* instance)
 
 void update_user_data(struct user_data* instance, struct position p, struct colour c, int asset, int angle)
 {
+	//printf("in update updataing index");
+
 	instance->user_position.x = p.x;
         instance->user_position.y = p.y;
         instance->user_position.z = p.z;

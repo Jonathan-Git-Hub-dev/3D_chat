@@ -33,7 +33,6 @@
             coordinates_label = new Label();
             fps_label = new Label();
             render_worker = new System.ComponentModel.BackgroundWorker();
-            communication_out_worker = new System.ComponentModel.BackgroundWorker();
             communication_in_worker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)render_screen).BeginInit();
             SuspendLayout();
@@ -87,11 +86,6 @@
             render_worker.DoWork += render_worker_DoWork;
             render_worker.ProgressChanged += backgroundWorker1_ProgressChanged;
             // 
-            // communication_out_worker
-            // 
-            communication_out_worker.WorkerSupportsCancellation = true;
-            communication_out_worker.DoWork += communiction_out_worker_DoWork;
-            // 
             // communication_in_worker
             // 
             communication_in_worker.WorkerSupportsCancellation = true;
@@ -124,7 +118,6 @@
         public Label coordinates_label;
         public Label fps_label;
         private System.ComponentModel.BackgroundWorker render_worker;
-        private System.ComponentModel.BackgroundWorker communication_out_worker;
         private System.ComponentModel.BackgroundWorker communication_in_worker;
     }
 

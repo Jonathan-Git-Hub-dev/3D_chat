@@ -8,101 +8,33 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <arpa/inet.h>
+#include <poll.h>
+#include <limits.h>
 
 #include "j_thread.h"
 #include "j_socket.h"
 #include "j_user_info.h"
+#include "j_temp.h"
+#include "j_globals.h"
 
 #include <sys/socket.h>
 
 #define MAXLINE 10000
 
 extern struct user_data users[MAX_USERS];
+extern char **audio_samples;
+extern pthread_mutex_t audio_mutex[MAX_USERS];
+extern char final_audio[FULL_SAMPLE_LEN];
+extern pthread_mutex_t main_audio_mutex;
+extern int *last_audio_samples;
 
-void encode_data(char* buffer)
+void exact_copy_n(char *dest, char *src, int n)
 {
-	buffer[0] = '\0';
-	//split useres with $
-	//split data points with spaces
-	//split multiple  data feilds wiht ,
-	for(int i=0; i<MAX_USERS; i++)
+	for(int i=0; i<n; i++)
 	{
-		//strcat(buffer, );
-		char single_buffer[200] = "";
-
-		sprintf(single_buffer, "%lf,%lf,%lf %d %d,%d,%d %d %d",
-			users[i].user_position.x,
-			users[i].user_position.y,
-			users[i].user_position.z,
-
-			users[i].angle,
-
-			users[i].user_colour.red,
-			users[i].user_colour.green,
-			users[i].user_colour.blue,
-
-			users[i].asset,
-
-			(users[i].online ? 1 : 0)
-		);
-
-		if(i != MAX_USERS-1)
-		{
-			strcat(single_buffer, "$");
-		}
-
-		strcat(buffer, single_buffer);
-
+		dest[i] = src[i];
 	}
 }
-
-void decode_data(char* str, int index)
-{
-	//user sends data split by spaces
-	//0,0,0 0 255,0,0 0
-	//postion angel colour asset
-	//x,y,z angle red,green,blue asset
-	const char* main_delimiter = " ";
-	const char* secondary_delimiter = ",";
-	char* position_pointer = strtok(str, main_delimiter);
-	char* angle_pointer = strtok(NULL, main_delimiter);
-	char* colour_pointer = strtok(NULL, main_delimiter);
-	char* asset_pointer = strtok(NULL, main_delimiter);
-
-	//printf("positon: %s\n", position_pointer);//printf("angle: %s\n", angle_pointer);//printf("colour %s\n", colour_pointer);//printf("asset: %s\n", asset_pointer);
-
-	char* pos_x = strtok(position_pointer, secondary_delimiter);
-	char* pos_y = strtok(NULL, secondary_delimiter);
-	char* pos_z = strtok(NULL, secondary_delimiter);
-
-	char* temp_red = strtok(colour_pointer, secondary_delimiter);
-	char* temp_green = strtok(NULL, secondary_delimiter);
-	char* temp_blue = strtok(NULL, secondary_delimiter);
-
-	double x = atof(pos_x);
-	double y = atof(pos_y);
-	double z = atof(pos_z);
-	struct position p;
-	p.x = x;
-	p.y = y;
-	p.z = z;
-
-	int angle = atoi(angle_pointer);
-
-	int red = atoi(temp_red);
-	int green = atoi(temp_green);
-	int blue = atoi(temp_blue);
-	struct colour c;
-	c.red = red;
-	c.green = green;
-	c.blue = blue;
-
-	int asset = atoi(asset_pointer);
-
-	update_user_data( &(users[index]), p,c, asset, angle);
-}
-
-
 
 void* handle_connection(void* ptr)
 {
@@ -112,57 +44,138 @@ void* handle_connection(void* ptr)
 
 	free(ptr);
 
-	printf("our_socket: %d, client_index: %d, udp: %d\n", our_socket, client_index, udp);
 
 
 	int sockfd;
-    char buffer[10000];
-    char *hello = "Hello from UDP server";
+    char in_buffer[10000];
+	char out_buffer[10000];
+    
     struct sockaddr_in servaddr, cliaddr, unused_address;
-
-    // Create a UDP socket
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("socket creation failed");
-        exit(EXIT_FAILURE);
-    }
-
-    memset(&servaddr, 0, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
     memset(&cliaddr, 0, sizeof(cliaddr));
 	memset(&unused_address, 0, sizeof(unused_address));
 
-    // Server information
-    servaddr.sin_family = AF_INET; // IPv4
-    servaddr.sin_addr.s_addr = INADDR_ANY; // Listen on all available interfaces
-    servaddr.sin_port = htons(udp); // Port to listen on
+    // Create a UDP socket
+    UDP_Socket(&sockfd);
+	Set_Sockaddr_In(&servaddr, udp);
+	Bind_Socket(&sockfd, &servaddr);
 
-    // Bind the socket to the server address
-    if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-        perror("bind failed");
-        exit(EXIT_FAILURE);
-    }
 
-    	socklen_t len;
-	socklen_t l2;
+    socklen_t len = sizeof(cliaddr);
+	socklen_t l2 = sizeof(unused_address);
     int n;
 
-    len = sizeof(cliaddr); // Store the size of the client address structure
-	l2 = sizeof(unused_address);
-
 	//get udp port to send to
-	n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, &len);
-    //printf("UDP Server listening on port %d...\n", udp);
+	//printf("%d first \n", client_index);
+	n = recvfrom(sockfd, (char *)in_buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&cliaddr, &len);
+	//printf("%d after first \n", client_index);
+	if (n > 0)
+    {
+     	char ip_str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(cliaddr.sin_addr), ip_str, sizeof(ip_str));
+    }
 
-    while (true) { // Loop to continuously receive and respon
-        n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&unused_address, &l2); //buffer[n] = '\0';
-	decode_data(buffer, client_index);
-        //printf("Client message: %s\n", buffer);
+	//polling
+	struct pollfd fds[1]; // Array to hold pollfd structures for monitored file descriptors
+    fds[0].fd = sockfd;
+    fds[0].events = POLLIN; // Monitor for incoming data (readability)
+    fds[0].revents = 0; // Will be set by poll() to indicate events that occurred
 
-	encode_data(buffer);
-        if(sendto(sockfd, (const char *)buffer, strlen(buffer), MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len) < 0)
-	{
-		printf("failed to send\n");
-	}
-        printf("Reply sent to client.\n");
+
+	struct timespec ts;
+	ts.tv_sec = -1;
+	ts.tv_nsec = -1;
+	struct timespec new_time;
+	struct timespec ts2;
+	ts2.tv_sec = -1;
+        ts2.tv_nsec = -1;
+
+
+	//read data when we have a packet
+	//send data when x time has passed (do later)
+    	while (true) { // Loop to continuously receive and respon
+		//printf("Pre rec\n");
+		int timeout_ms = 10; // Timeout in milliseconds (e.g., 1 second)
+    		int ready_fds = poll(fds, 1, timeout_ms);
+
+        	if(ready_fds > 0)//has data
+		{
+			n = recvfrom(sockfd, (char *)in_buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *)&unused_address, &l2); //buffer[n] = '\0';
+
+			if (n > 0)
+                	{
+                        	char ip_str[INET_ADDRSTRLEN];
+                        	inet_ntop(AF_INET, &(unused_address.sin_addr), ip_str, sizeof(ip_str));
+                        	//printf("Source IP: %s, Port: %d\n", ip_str, ntohs(unused_address.sin_port));
+
+				in_buffer[n] = '\0';
+
+				if(in_buffer[n-1] == 'A')
+				{
+                                        //sendto(sockfd, (const char *)in_buffer, n, MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len);
+					//printf("locking mutex %d\n", client_index);
+					pthread_mutex_lock(&(audio_mutex[client_index]));
+
+					exact_copy_n(audio_samples[client_index], in_buffer, SAMPLE_LEN);
+					last_audio_samples[client_index]++;
+
+					pthread_mutex_unlock(&(audio_mutex[client_index]));
+				}
+				else//'S' spatial data
+				{
+					in_buffer[n-1] = '\0';
+					//printf("spacial update\n");
+					decode_data(in_buffer, client_index);
+				}
+                	}
+
+		}
+
+
+		//send spatial data occsaionally
+		clock_gettime(CLOCK_MONOTONIC, &new_time);
+                if((new_time.tv_sec - ts.tv_sec) *1000000000 + new_time.tv_nsec - ts.tv_nsec >= SPACIAL_TIME)//off dome
+                {
+			encode_data(out_buffer);
+
+                        //sendto(sockfd, (const char *)out_buffer, strlen(out_buffer), MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len);
+
+                        //save for later
+                        ts.tv_sec = new_time.tv_sec;
+                        ts.tv_nsec = new_time.tv_nsec;
+
+               		//printf("Reply sent to client (%s).\n", "dw");
+                }
+
+		//send audio data occasionally
+		clock_gettime(CLOCK_MONOTONIC, &new_time);
+                if((new_time.tv_sec - ts2.tv_sec) *1000000000 + new_time.tv_nsec - ts2.tv_nsec >= AUDIO_TIME)//off dome
+                {
+                        //encode_data(out_buffer);
+			pthread_mutex_lock(&main_audio_mutex);
+
+
+
+                        if(sendto(sockfd, (const char *)final_audio, SAMPLE_LEN+1, MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len) < 0) {
+			//if(sendto(sockfd, (const char *)audio_samples[0], SAMPLE_LEN+1, MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len) < 0) {
+			//if(sendto(sockfd, (const char *)"hello", 5, MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len ) < 0){
+				perror("sendto failed"); // Call perror if sendto() fails
+        			exit(EXIT_FAILURE);
+    			}
+			//sendto(sockfd, (const char *)out_buffer, strlen(out_buffer), MSG_CONFIRM, (const struct sockaddr *)&cliaddr, len);
+
+
+			pthread_mutex_unlock(&main_audio_mutex);
+
+
+
+                        //save for later
+                        ts2.tv_sec = new_time.tv_sec;
+                        ts2.tv_nsec = new_time.tv_nsec;
+
+                        //printf("Audio Reply sent to client (%s).\n", "dw");
+                }
+
     }
 
     close(sockfd); // Close the socket (unreachable in this infinite loop)

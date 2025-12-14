@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace WinFormsApp1.codes
 {
-    internal class Audiocs
+    internal class Audio
     {
+        public static int gg = 0;
+
     }
 }
 /*

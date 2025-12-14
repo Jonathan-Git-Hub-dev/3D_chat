@@ -455,6 +455,8 @@ namespace WinFormsApp1
                 inside.Translate_Point(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
                 outside.Translate_Point(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
 
+                Console.WriteLine("outside point: post, pre:    " + outside.ToString() + "       " + Form1.assets[temp.asset_index].external_points[i].ToString());
+
                 double distance_inside = Point_3d.Unsquared_Distance(origin, inside);
                 double distance_outside = Point_3d.Unsquared_Distance(origin, outside);
 
@@ -480,40 +482,47 @@ namespace WinFormsApp1
                 }
 
                 //Console.WriteLine("\tRender AA 2");
-                //Console.WriteLine("Test dist new" + Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)));
+                
                 if(Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)) > 1.1 )
                 {
-                    //Console.WriteLine("Test dist" + Point_3d.Unsquared_Distance(Form1.assets[temp.asset_index].external_points[i], Face.Middle(Form1.assets[temp.asset_index].faces[i])));
-                    //Console.WriteLine("Test dist new" + Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)));
+                    //print the new distance
+                    Console.WriteLine("Test dist new" + Point_3d.Unsquared_Distance(outside, Face.Middle(face_t)));
+                    Console.WriteLine("origin of shape " + temp.origin);
+                    Console.WriteLine("middle of shape " + Form1.assets[temp.asset_index].middle);
+                    Console.WriteLine("angle of shape " + temp.angle);
 
-                    //Console.WriteLine("originla outdise point" + Form1.assets[temp.asset_index].external_points[i].ToString());
-                    //Console.WriteLine()
+                    Console.WriteLine("originl points");
+                    Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p1.ToString());
+                    Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p2.ToString());
+                    Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p3.ToString());
+                    Console.WriteLine("mid: " + Face.Middle(Form1.assets[temp.asset_index].faces[i]));
 
-                    //Console.WriteLine("rotation values" + Form1.assets[temp.asset_index].middle.ToString() + " " + temp.angle + " " + temp.origin.ToString());
-
-
-                    Point_3d outside2 = Form1.assets[temp.asset_index].external_points[i].Copy();
-
-                    
-                    //outside2.Translate_Point2(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
-
-                    //Console.WriteLine("originl points");
-                    //Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p1.ToString());
-                    //Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p2.ToString());
-                    //Console.WriteLine(Form1.assets[temp.asset_index].faces[i].p3.ToString());
-
-                    //Console.WriteLine("after points");
-                    //Console.WriteLine(face_t.p1.ToString());
-                    //Console.WriteLine(face_t.p2.ToString());
-                    //Console.WriteLine(face_t.p3.ToString());
-
-                    //Console.WriteLine("o outside");
-                    //Console.WriteLine(Form1.assets[temp.asset_index].external_points[i].ToString());
-                    //Console.WriteLine("a outside");
-                    //Console.WriteLine(outside.ToString());
+                    Console.WriteLine("after points");
+                    Console.WriteLine(face_t.p1.ToString());
+                    Console.WriteLine(face_t.p2.ToString());
+                    Console.WriteLine(face_t.p3.ToString());
+                    Console.WriteLine("mid: " + Face.Middle(face_t));
 
 
 
+                    Console.WriteLine("THis is a rerun");
+                    Point_3d origin1 = new Point_3d(0, 10, 0);
+                    Point_3d middle1 = new Point_3d(0, 0, 0);
+                    //Point_3d outside = new Point_3d(-1.7, 0.3, -3.3);
+                    //outside.Translate_Point(middle, 0, origin);
+                    int a1 = 0;
+
+                    //Console.WriteLine("after translate " + outside.ToString());
+                    Face f = new Face(new Point_3d(-1.7, 0.3, -3.3), new Point_3d(-1.7, 0.3, -3.3), new Point_3d(-1.7, 0.3, -3.3));
+
+                    f.Translate_Face(middle1, a1, origin1);
+
+                    Console.WriteLine("after translate " + f.p1.ToString());
+
+                    Console.WriteLine("Comparison");
+                    Console.WriteLine("angles (" + a1 + ")(" + temp.angle + ")");
+                    Console.WriteLine("middle (" + middle1.ToString() + ")(" + Form1.assets[temp.asset_index].middle.ToString() + ")");
+                    Console.WriteLine("origins (" + origin1 + ")(" + temp.origin + ")");
                 }
 
                 Render_Triangle(a, b, c, face_t, outside, temp.colour, origin, xy_angle, nv, best, bm, tl);

@@ -85,5 +85,14 @@ namespace WinFormsApp1
         public static Startup startup_screen;
 
         public static bool showing_menu = false;
+
+        public static byte[] audio_data_char = { (byte)'A' };
+        public static byte[] spacial_data_char = { (byte)'S'};
+
+
+        //audio data
+        public static int samples_per_second = 6000;
+        public static int sample_in_bytes = 4;
+        public static int sample_milliseconds = 50;
     }
 }

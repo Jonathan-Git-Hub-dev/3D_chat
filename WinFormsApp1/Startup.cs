@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.VisualBasic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Sockets;
@@ -6,6 +7,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using NAudio.Wave;
 
 namespace WinFormsApp1
 {
@@ -156,123 +158,6 @@ namespace WinFormsApp1
         }
         private async void Connect_Button_Click(object sender, EventArgs e)
         {
-            /*int angle = 600;
-            Point_3d origin = new Point_3d(0, 15.25, 0);
-            Point_3d middle = new Point_3d(0, 0, 0);
-            Point_3d outside = new Point_3d(0.18642766666666666, -1.5836833644867578, -0.9128442541473173);
-            Point_3d outsidet = new Point_3d(0.350946384794766, 13.694479216194667, -0.9128442541473173);
-
-
-
-
-            //outside.Translate_Point2(middle, angle, origin);
-
-            Face f = new Face(new Point_3d(-0.110241, -0.5, 0), new Point_3d(0.559283, -0.762466, -3), new Point_3d(0.110241, -0.5, 0));
-            f.Translate_Face(middle, angle, origin);
-
-            Console.WriteLine(f.p1.ToString());
-            Console.WriteLine(f.p2.ToString());
-            Console.WriteLine(f.p3.ToString());
-
-            Face ft = new Face(new Point_3d(0.5492571578417693, 14.574052344666473, -2.625), new Point_3d(0.6359185884810887, 14.550171861047858, -3), new Point_3d(0.5766664299085927, 14.576933175246245, -2.625));
-
-
-
-            Console.WriteLine("\n\n\n" + Point_3d.Unsquared_Distance(outside, Face.Middle(f)) + " " + Point_3d.Unsquared_Distance(outsidet, Face.Middle(ft)));*/
-
-            /*int angle= 200;
-            Point_3d origin = new Point_3d(0, -3.5, 0);
-            Point_3d middle = new Point_3d(0, 0, 0);
-            Point_3d outside = new Point_3d(-2.5408286962147195, 0.7408286962147193, -0.598433784276088);
-            Face f = new Face(new Point_3d(-1.802458, -0, 0.7), new Point_3d(-1.7, 0.102458, 0.7), new Point_3d(-2, 0, -3.3));
-
-            Console.WriteLine(f.p1.ToString());
-            Console.WriteLine(f.p2.ToString());
-            Console.WriteLine(f.p3.ToString());
-
-            Console.WriteLine(outside.ToString());
-
-            outside.Translate_Point(middle, angle, origin);
-            f.Translate_Face(middle, angle, origin);
-
-            Console.WriteLine(f.p1.ToString());
-            Console.WriteLine(f.p2.ToString());
-            Console.WriteLine(f.p3.ToString());
-
-            Console.WriteLine(outside.ToString());
-
-            Console.WriteLine(Point_3d.Unsquared_Distance(Face.Middle(f), outside));*/
-
-
-            //Random random = new Random();
-
-            //int i = 0;
-
-            /*while (Point_3d.Unsquared_Distance(outside, Face.Middle(f)) < 1.2 && i < 10000)
-            {
-                i++;
-                f.p1.x = random.NextDouble() * 50;
-                f.p1.y = random.NextDouble() * 50;
-                f.p1.z = random.NextDouble() * 50;
-
-                f.p2.x = random.NextDouble() * 50;
-                f.p2.y = random.NextDouble() * 50;
-                f.p2.z = random.NextDouble() * 50;
-                
-                f.p3.x = random.NextDouble() * 50;
-                f.p3.y = random.NextDouble() * 50;
-                f.p3.z = random.NextDouble() * 50;
-
-                Vector nv = Vector.Normal_Vector(f);
-                nv.Scale_Vector();
-
-                Point_3d mid = Face.Middle(f);
-
-                outside = Point_3d.Point_Plus_Vector(mid, nv);
-
-                //int angle = (int)(random.NextDouble() * 360 * 100);
-                int angle = 600;
-
-
-                //print values
-                Console.WriteLine("\n\n\n\n" + f.p1.ToString());
-                Console.WriteLine(f.p2.ToString());
-                Console.WriteLine(f.p3.ToString());
-
-                Console.WriteLine(outside.ToString());
-
-                Console.WriteLine("angle " + angle);
-
-                Console.WriteLine("original distance" + Point_3d.Unsquared_Distance(outside, Face.Middle(f)));
-
-
-
-                //transmute
-                outside.Translate_Point(middle, angle, origin);
-                f.Translate_Face(middle, angle, origin);
-
-
-                //print transmuted
-                Console.WriteLine(f.p1.ToString());
-                Console.WriteLine(f.p2.ToString());
-                Console.WriteLine(f.p3.ToString());
-
-                Console.WriteLine(outside.ToString());
-
-                Console.WriteLine("new distance" + Point_3d.Unsquared_Distance(outside, Face.Middle(f)));
-
-
-            }
-            Console.WriteLine(i);*/
-
-
-
-
-
-
-            //return;
-
-
             //info about our instance
             (bool status, int id, int new_port) data = await Connect();
 
@@ -282,10 +167,6 @@ namespace WinFormsApp1
                 return;
             }
 
-
-            //Form1 newForm = new Form1(data.id, data.new_port, chosen_option, colour_choice); // Create an instance of Form2
-            //Form1 newForm = new Form1(0, 0, chosen_option, colour_choice);
-            //newForm.Show();
 
             //save users data to globals
             Globals.id = data.id;

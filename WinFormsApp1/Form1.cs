@@ -1,7 +1,13 @@
+using NAudio.Wave;
+using NAudio.Wave;
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 //using System.Net;
 //using System.Net.Sockets;
 //using System.Text;
@@ -19,7 +25,7 @@ namespace WinFormsApp1
     {
         public static Asset[] assets = new Asset[Globals.asset_options.Length];
         public static Asset_Instance[] players = new Asset_Instance[Globals.max_users];
-     
+
         Menu modalForm;// = new Menu();
 
         //public Form1(int id, int port, int asset_num, int[] colour_choice)
@@ -77,32 +83,9 @@ namespace WinFormsApp1
         {
             render_worker.CancelAsync();
             communication_in_worker.CancelAsync();
-            communication_out_worker.CancelAsync();
+            //communication_out_worker.CancelAsync();
         }
 
-        private void communiction_out_worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            //Console.WriteLine("first");
-            BackgroundWorker worker = sender as BackgroundWorker;
-
-            UdpClient udpClient = new UdpClient();
-
-            while (!worker.CancellationPending)
-            {
-                //get our data use a mutex
-                string message = Communications.Encode_User_statistic(origin, xy_angle, Globals.colour_choice, Globals.chosen_option);
-                Console.WriteLine("seinding data " + message);
-                //Console.WriteLine("sent " + Globals.chosen_option);
-                byte[] data = Encoding.UTF8.GetBytes(message);
-
-                //Console.WriteLine("Sending");
-                udpClient.Send(data, data.Length, Globals.server_ip, Globals.new_port);
-                Thread.Sleep(1000);
-            }
-
-            e.Cancel = true; // Indicate that the operation was cancelled
-            return; // Exit the DoWork method
-        }
 
         public void Hide_Mouse()//(Form1 screen)
         {
@@ -119,65 +102,122 @@ namespace WinFormsApp1
             Hide_Mouse();
         }
 
+
+        byte[] audio_save = new byte[1200];
+        bool audio_save_done = false;
+
         private async void communication_in_worker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-
-            UdpClient udpClient = new UdpClient();
-
-            // Prepare the data to send
-            string message = "sending useles data for binding";
-            byte[] data2 = Encoding.UTF8.GetBytes(message);
-
-            // Specify the remote endpoint (IP address and port)
-            //int remotePort = 8081;
-            //Trace.WriteLine(udp_port + " " + remotePort);
-
-
-            // Send the data
-            //Console.WriteLine("this is our port " + Globals.new_port);
-            udpClient.Send(data2, data2.Length, Globals.server_ip, Globals.new_port);
-            //Console.WriteLine("this is our port after" + Globals.new_port);
-
-
-
-
-            //we send the first udp message then active
-            communication_out_worker.RunWorkerAsync();
-
-
-            //Trace.WriteLine($"UDP message sent to {Globals.server_ip}:{remotePort}");
-            while (!worker.CancellationPending)
+            using (var waveIn = new NAudio.Wave.WaveInEvent())
+            using (var _waveOut = new NAudio.Wave.WaveOutEvent())
             {
-                //Console.WriteLine("before in");
-                UdpReceiveResult result = await udpClient.ReceiveAsync();
-                //Console.WriteLine("after in");
-                byte[] receiveBytes = result.Buffer;
-                string returnData = Encoding.ASCII.GetString(receiveBytes);
+                //change to both in and out
 
-                Console.WriteLine("data recieved " + returnData);
-                //Trace.WriteLine("we recieved: " + returnData);
 
-                lock (variable_lock)
+                UdpClient udpClient = new UdpClient(11111);
+                // make server aware of our udp port
+                byte[] data2 = Encoding.UTF8.GetBytes("sending useles data for binding");
+                udpClient.Send(data2, data2.Length, Globals.server_ip, Globals.new_port);
+
+
+
+
+
+
+
+                waveIn.DeviceNumber = 0;
+                waveIn.WaveFormat = new NAudio.Wave.WaveFormat(Globals.samples_per_second, Globals.sample_in_bytes * 8, 1);
+                waveIn.BufferMilliseconds = Globals.sample_milliseconds;
+
+                var bufferedWaveProvider = new NAudio.Wave.BufferedWaveProvider(waveIn.WaveFormat);
+                bufferedWaveProvider.BufferLength = 1200 * 5; // Total buffer size
+                bufferedWaveProvider.DiscardOnBufferOverflow = true;
+                _waveOut.Init(bufferedWaveProvider);
+
+
+
+
+                //we send the first udp message then active
+                //communication_out_worker.RunWorkerAsync();
+
+                long last_publish = 0;
+
+
+                //set up sending port
+                UdpClient udpClientOut = new UdpClient();
+                //IPEndPoint localEndPoint = (IPEndPoint)udpClientOut.Client.LocalEndPoint;
+
+
+
+                //start audio
+                _waveOut.Play();
+                waveIn.StartRecording();
+
+                //send audio
+
+                waveIn.DataAvailable += (sender, e) =>
                 {
-                    Communications.Decode_S(returnData, ref players);
+                    byte[] f_data = [.. e.Buffer, .. Globals.audio_data_char];
+
+                    udpClientOut.Send(f_data, f_data.Length, Globals.server_ip, Globals.new_port);
+                };
+
+                while (!worker.CancellationPending)
+                {
+                    //When sever has sent data and dispose of it
+                    if (udpClient.Client.Poll(1000, SelectMode.SelectRead))
+                    {
+                        UdpReceiveResult result = await udpClient.ReceiveAsync();
+
+                        Console.WriteLine("recieved: " + Encoding.ASCII.GetString(result.Buffer));
+
+                        byte[] receiveBytes = result.Buffer.Take(result.Buffer.Length - 1).ToArray();
+
+                        if (result.Buffer[result.Buffer.Length - 1] == Globals.spacial_data_char[0])
+                        {//space
+                            string returnData = Encoding.ASCII.GetString(receiveBytes);
+
+                            lock (variable_lock)
+                            {
+                                Communications.Decode_S(returnData, ref players);
+                            }
+                        }
+                        else
+                        {//audio
+                            bufferedWaveProvider.AddSamples(receiveBytes, 0, 1200);
+                        }
+                    }
+
+                    //publish to server
+                    long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    if (now - last_publish > 1000)//do every second
+                    {
+                        last_publish = now;
+
+                        //get our data use a mutex
+                        string message2 = Communications.Encode_User_statistic(origin, xy_angle, Globals.colour_choice, Globals.chosen_option);
+
+
+                        byte[] data3 = Encoding.UTF8.GetBytes(message2);
+
+                        byte[] f_data = [.. data3, .. Globals.spacial_data_char];
+
+                        udpClientOut.Send(f_data, f_data.Length, Globals.server_ip, Globals.new_port);
+                    }
+
                 }
 
-                /*for(int i=0; i<Globals.max_users; i++)
-                {
-                    players[i].Print();
-                    Console.WriteLine("");
-                }*/
-            }
-
-          
+                //stop audio
+                _waveOut.Stop();
+                waveIn.StopRecording();
                 e.Cancel = true; // Indicate that the operation was cancelled
+
                 return; // Exit the DoWork method
-            
+            }
             //udpClient.Close();
 
         }
-
 
         public enum Render_State
         {
@@ -232,7 +272,7 @@ namespace WinFormsApp1
                 {
                     lock (render_lock)
                     {
-                        
+
                         //Trace.WriteLine("1 rell");
                         if (render_states[render_index] != Render_State.Used)
                         {
@@ -253,8 +293,8 @@ namespace WinFormsApp1
                     pass_z_angle = z_angle;
                     pass_origin = origin.Copy();
 
-                    players[0].angle += 200;
-                    players[0].angle %= 35999;
+                    //players[0].angle += 200;
+                    //players[0].angle %= 35999;
 
                     for (int i = 0; i < Globals.max_users; i++)
                     {
@@ -276,7 +316,7 @@ namespace WinFormsApp1
 
                 long fps = 1000 / Render.Span_Ring_Array(ref span_array, span);
 
-        
+
 
                 DateTime currentTime = DateTime.Now;
                 //Trace.WriteLine($"Current time: {currentTime.ToString("HH:mm:ss")}");
@@ -290,11 +330,11 @@ namespace WinFormsApp1
                 render_index++;
                 render_index %= 2;
 
-                
 
-                
 
-        }
+
+
+            }
             e.Cancel = true; // Indicate that the operation was cancelled
             //Trace.WriteLine("render workder done " + DateTime.Now.ToLongTimeString());
 
@@ -359,12 +399,12 @@ namespace WinFormsApp1
 
             }
 
-            if(Globals.showing_menu)//only take input when not showing menu
+            if (Globals.showing_menu)//only take input when not showing menu
             {
                 return;
             }
 
-            
+
 
             lock (variable_lock)
             {
@@ -391,6 +431,11 @@ namespace WinFormsApp1
         private void Form1_Resize(object sender, EventArgs e)
         {
             Trace.WriteLine("this has been resized");
+        }
+
+        private void communication_audio_worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+
         }
     }
 }

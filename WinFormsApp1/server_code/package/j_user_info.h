@@ -1,5 +1,7 @@
 #define MAX_USERS 4
 
+#include <stdbool.h>
+
 struct position {
 	double x;
         double y;
