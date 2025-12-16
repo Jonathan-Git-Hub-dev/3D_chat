@@ -130,10 +130,10 @@ namespace WinFormsApp1
                 NetworkStream stream = client.GetStream();
 
                 //send out stats
-                //byte[] data = Encoding.ASCII.GetBytes(colour_choice.ToString() + " " + chosen_option);
+                byte[] data = Encoding.ASCII.GetBytes(colour_choice.ToString() + " " + chosen_option);
 
                 // Send the data to the server
-                //stream.Write(data, 0, data.Length);
+                stream.Write(data, 0, data.Length);
 
 
                 if ((bytesRead = stream.Read(buffer, 0, buffer.Length)) < 0)
@@ -173,7 +173,7 @@ namespace WinFormsApp1
             //Globals.id = 0;
             Globals.new_port = data.new_port;
             //Globals.new_port = 0;
-            Globals.chosen_option = chosen_option;
+            //Globals.chosen_option = chosen_option;
             //Globals.colour_choice = colour_choice;
             Globals.colour_choice = new Colour(colour_choice);
 
@@ -193,7 +193,7 @@ namespace WinFormsApp1
             Machine_Button.FlatAppearance.BorderSize = 5;
             Golden_Button.FlatAppearance.BorderSize = 1;
 
-            chosen_option = 0;
+            Globals.chosen_option = 1;
         }
 
         private void Golden_Button_Click(object sender, EventArgs e)
@@ -201,7 +201,7 @@ namespace WinFormsApp1
             Machine_Button.FlatAppearance.BorderSize = 1;
             Golden_Button.FlatAppearance.BorderSize = 5;
 
-            chosen_option = 1;
+            Globals.chosen_option = 0;
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)

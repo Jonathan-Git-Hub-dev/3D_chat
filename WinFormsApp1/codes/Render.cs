@@ -455,7 +455,7 @@ namespace WinFormsApp1
                 inside.Translate_Point(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
                 outside.Translate_Point(Form1.assets[temp.asset_index].middle, temp.angle, temp.origin);
 
-                Console.WriteLine("outside point: post, pre:    " + outside.ToString() + "       " + Form1.assets[temp.asset_index].external_points[i].ToString());
+                //Console.WriteLine("outside point: post, pre:    " + outside.ToString() + "       " + Form1.assets[temp.asset_index].external_points[i].ToString());
 
                 double distance_inside = Point_3d.Unsquared_Distance(origin, inside);
                 double distance_outside = Point_3d.Unsquared_Distance(origin, outside);

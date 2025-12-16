@@ -60,10 +60,10 @@ namespace WinFormsApp1
         //used to derive angles
         //100 = 1 degree
         //max of 35999 after which it raps around
-        int xy_angle = 0;
+        int xy_angle = 18000;
         int z_angle = 0;
 
-        Point_3d origin = new Point_3d(0, 6, 0);
+        Point_3d origin = new Point_3d(0, -16, 0);
 
         Bitmap[] bm;
 
@@ -170,13 +170,14 @@ namespace WinFormsApp1
                     {
                         UdpReceiveResult result = await udpClient.ReceiveAsync();
 
-                        Console.WriteLine("recieved: " + Encoding.ASCII.GetString(result.Buffer));
+                        //Console.WriteLine("recieved: " + Encoding.ASCII.GetString(result.Buffer));
 
                         byte[] receiveBytes = result.Buffer.Take(result.Buffer.Length - 1).ToArray();
 
                         if (result.Buffer[result.Buffer.Length - 1] == Globals.spacial_data_char[0])
                         {//space
                             string returnData = Encoding.ASCII.GetString(receiveBytes);
+                            Console.WriteLine(returnData);
 
                             lock (variable_lock)
                             {
@@ -197,6 +198,7 @@ namespace WinFormsApp1
 
                         //get our data use a mutex
                         string message2 = Communications.Encode_User_statistic(origin, xy_angle, Globals.colour_choice, Globals.chosen_option);
+                        Console.WriteLine("choses asset " +  Globals.chosen_option);
 
 
                         byte[] data3 = Encoding.UTF8.GetBytes(message2);
